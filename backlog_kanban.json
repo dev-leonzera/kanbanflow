@@ -1,0 +1,749 @@
+{
+  "project": "App gerenciador de tarefas kanban",
+  "description": "Backlog do que falta, com base no estado atual do app",
+  "status_values": {
+    "todo": "não iniciado",
+    "partial": "parcialmente implementado",
+    "done": "concluído"
+  },
+  "releases": [
+    "MVP",
+    "V2",
+    "V3"
+  ],
+  "items": [
+    {
+      "id": "EV-01",
+      "epic": "Dados",
+      "title": "Log de eventos: cada mudança de coluna, com data, hora e autor",
+      "release": "MVP",
+      "stage": "Etapa 0: Fundação",
+      "status": "done",
+      "depends_on": []
+    },
+    {
+      "id": "TD-01",
+      "epic": "Dívida técnica",
+      "title": "Migração de user_id para workspace: criar workspaces e workspace_members, gerar um workspace pessoal para cada usuário existente e trocar boards.user_id por boards.workspace_id",
+      "release": "MVP",
+      "stage": "Etapa 0: Fundação",
+      "status": "done",
+      "depends_on": []
+    },
+    {
+      "id": "TD-02",
+      "epic": "Dívida técnica",
+      "title": "Arquivamento (soft delete) de colunas e cartões, no lugar da exclusão em cascata",
+      "release": "MVP",
+      "stage": "Etapa 0: Fundação",
+      "status": "done",
+      "depends_on": []
+    },
+    {
+      "id": "TD-03",
+      "epic": "Dívida técnica",
+      "title": "Endurecimento de segurança: senha mínima maior, botão demo e endpoint de reset apenas em desenvolvimento, cookie com Secure e SameSite, proteção contra CSRF e limite de tentativas de login",
+      "release": "MVP",
+      "stage": "Etapa 0: Fundação",
+      "status": "done",
+      "depends_on": []
+    },
+    {
+      "id": "WS-01",
+      "epic": "Workspace",
+      "title": "Entidade Workspace (nome neutro), com parent_id opcional reservado e nulo",
+      "release": "MVP",
+      "stage": "Etapa 1: Workspace e múltiplos quadros",
+      "status": "done",
+      "depends_on": [
+        "TD-01"
+      ]
+    },
+    {
+      "id": "WS-02",
+      "epic": "Workspace",
+      "title": "Usuário independente do workspace (relação N:N)",
+      "release": "MVP",
+      "stage": "Etapa 1: Workspace e múltiplos quadros",
+      "status": "done",
+      "depends_on": [
+        "WS-01"
+      ]
+    },
+    {
+      "id": "BD-01",
+      "epic": "Quadros",
+      "title": "Criar mais de um quadro, renomear quadro e reordenar colunas",
+      "release": "MVP",
+      "stage": "Etapa 1: Workspace e múltiplos quadros",
+      "status": "done",
+      "depends_on": [
+        "WS-01"
+      ],
+      "already_done": "Criação e exclusão de colunas já existem"
+    },
+    {
+      "id": "CD-03",
+      "epic": "Cartões",
+      "title": "Subtarefa como cartão completo (parent_id), mantendo o checklist atual em paralelo",
+      "release": "MVP",
+      "stage": "Etapa 2: Hierarquia de trabalho",
+      "status": "done",
+      "depends_on": [
+        "BD-01"
+      ]
+    },
+    {
+      "id": "CD-04",
+      "epic": "Cartões",
+      "title": "Tipos de cartão (Épico, História, Tarefa, Bug, Subtarefa) com regras de parentesco",
+      "release": "MVP",
+      "stage": "Etapa 2: Hierarquia de trabalho",
+      "status": "done",
+      "depends_on": [
+        "CD-03"
+      ]
+    },
+    {
+      "id": "CD-05",
+      "epic": "Cartões",
+      "title": "Progresso agregado no pai, estendido do checklist para filhos-cartão",
+      "release": "MVP",
+      "stage": "Etapa 2: Hierarquia de trabalho",
+      "status": "done",
+      "depends_on": [
+        "CD-03"
+      ],
+      "already_done": "Progresso do checklist já existe"
+    },
+    {
+      "id": "BD-04",
+      "epic": "Quadros",
+      "title": "Função central can(user, action, resource), com papéis como conjunto de permissões",
+      "release": "MVP",
+      "stage": "Etapa 3: Permissões",
+      "status": "todo",
+      "depends_on": [
+        "WS-02"
+      ]
+    },
+    {
+      "id": "WS-03",
+      "epic": "Workspace",
+      "title": "Papéis do workspace: Owner, Admin, Membro, Convidado",
+      "release": "MVP",
+      "stage": "Etapa 3: Permissões",
+      "status": "todo",
+      "depends_on": [
+        "BD-04"
+      ]
+    },
+    {
+      "id": "WS-04",
+      "epic": "Workspace",
+      "title": "Múltiplos owners e regra do último owner",
+      "release": "MVP",
+      "stage": "Etapa 3: Permissões",
+      "status": "todo",
+      "depends_on": [
+        "WS-03"
+      ]
+    },
+    {
+      "id": "WS-05",
+      "epic": "Workspace",
+      "title": "Transferência de propriedade com confirmação",
+      "release": "MVP",
+      "stage": "Etapa 3: Permissões",
+      "status": "todo",
+      "depends_on": [
+        "WS-04"
+      ]
+    },
+    {
+      "id": "WS-06",
+      "epic": "Workspace",
+      "title": "Contato de cobrança como campo separado do owner",
+      "release": "MVP",
+      "stage": "Etapa 3: Permissões",
+      "status": "todo",
+      "depends_on": [
+        "WS-01"
+      ]
+    },
+    {
+      "id": "BD-02",
+      "epic": "Quadros",
+      "title": "Papéis do quadro: Owner, Editor, Comentarista, Leitor",
+      "release": "MVP",
+      "stage": "Etapa 3: Permissões",
+      "status": "todo",
+      "depends_on": [
+        "BD-04"
+      ]
+    },
+    {
+      "id": "BD-03",
+      "epic": "Quadros",
+      "title": "Visibilidade do quadro: privado ou visível ao workspace",
+      "release": "MVP",
+      "stage": "Etapa 3: Permissões",
+      "status": "todo",
+      "depends_on": [
+        "BD-02"
+      ]
+    },
+    {
+      "id": "BD-05",
+      "epic": "Quadros",
+      "title": "Convidado externo restrito aos quadros compartilhados",
+      "release": "MVP",
+      "stage": "Etapa 3: Permissões",
+      "status": "todo",
+      "depends_on": [
+        "BD-02",
+        "WS-03"
+      ]
+    },
+    {
+      "id": "EV-02",
+      "epic": "Dados",
+      "title": "Log de auditoria básico (quem mudou o quê)",
+      "release": "MVP",
+      "stage": "Etapa 3: Permissões",
+      "status": "todo",
+      "depends_on": [
+        "EV-01"
+      ]
+    },
+    {
+      "id": "CD-02",
+      "epic": "Cartões",
+      "title": "Comentários e anexos nos cartões",
+      "release": "MVP",
+      "stage": "Etapa 4: Cartões e visões",
+      "status": "partial",
+      "depends_on": [
+        "BD-02"
+      ],
+      "already_done": "Responsável, prazo e tag já existem"
+    },
+    {
+      "id": "CD-08",
+      "epic": "Cartões",
+      "title": "Campo de estimativa configurável (pontos, horas ou P/M/G)",
+      "release": "MVP",
+      "stage": "Etapa 4: Cartões e visões",
+      "status": "todo",
+      "depends_on": []
+    },
+    {
+      "id": "CD-06",
+      "epic": "Cartões",
+      "title": "Relações entre cartões (bloqueia, relacionado, duplicado) com detecção de ciclos",
+      "release": "MVP",
+      "stage": "Etapa 4: Cartões e visões",
+      "status": "todo",
+      "depends_on": []
+    },
+    {
+      "id": "CD-07",
+      "epic": "Cartões",
+      "title": "Indicador visual de bloqueio e aviso ao mover cartão bloqueado",
+      "release": "MVP",
+      "stage": "Etapa 4: Cartões e visões",
+      "status": "todo",
+      "depends_on": [
+        "CD-06"
+      ]
+    },
+    {
+      "id": "VW-01",
+      "epic": "Visões",
+      "title": "Salvar e nomear filtros",
+      "release": "MVP",
+      "stage": "Etapa 4: Cartões e visões",
+      "status": "partial",
+      "depends_on": [],
+      "already_done": "Filtros por prioridade e responsável já existem, sem persistência"
+    },
+    {
+      "id": "VW-02",
+      "epic": "Visões",
+      "title": "Tela agregada \"Meu dia\", com cartões de todos os quadros",
+      "release": "MVP",
+      "stage": "Etapa 4: Cartões e visões",
+      "status": "todo",
+      "depends_on": [
+        "BD-01"
+      ]
+    },
+    {
+      "id": "NT-01",
+      "epic": "Notificações",
+      "title": "Preferências de notificação por tipo de evento e por canal",
+      "release": "MVP",
+      "stage": "Etapa 5: Notificações",
+      "status": "todo",
+      "depends_on": [
+        "CD-02"
+      ]
+    },
+    {
+      "id": "NT-02",
+      "epic": "Notificações",
+      "title": "Nível de inscrição por cartão ou quadro (todas, só menções, nenhuma)",
+      "release": "MVP",
+      "stage": "Etapa 5: Notificações",
+      "status": "todo",
+      "depends_on": [
+        "NT-01"
+      ]
+    },
+    {
+      "id": "SP-01",
+      "epic": "Sprints",
+      "title": "Entidade Sprint (nome, datas, meta, status)",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CD-08"
+      ]
+    },
+    {
+      "id": "SP-02",
+      "epic": "Sprints",
+      "title": "Backlog separado e planejamento arrastando cartões para o sprint",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "SP-01"
+      ]
+    },
+    {
+      "id": "SP-03",
+      "epic": "Sprints",
+      "title": "Encerramento guiado (incompletos voltam ao backlog ou vão para o próximo)",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "SP-01"
+      ]
+    },
+    {
+      "id": "SP-04",
+      "epic": "Sprints",
+      "title": "Relatório de sprint: planejado vs. entregue",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "SP-03",
+        "EV-01"
+      ]
+    },
+    {
+      "id": "RP-01",
+      "epic": "Relatórios",
+      "title": "Cycle time e lead time por cartão e por tipo",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "EV-01"
+      ]
+    },
+    {
+      "id": "RP-02",
+      "epic": "Relatórios",
+      "title": "Burndown/burnup e velocity",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "SP-01",
+        "EV-01"
+      ]
+    },
+    {
+      "id": "RP-03",
+      "epic": "Relatórios",
+      "title": "Diagrama de fluxo cumulativo e tempo médio por coluna",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "EV-01"
+      ]
+    },
+    {
+      "id": "RP-04",
+      "epic": "Relatórios",
+      "title": "Throughput semanal e exportação CSV",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "EV-01"
+      ]
+    },
+    {
+      "id": "BD-06",
+      "epic": "Quadros",
+      "title": "Limite WIP por coluna com alerta visual",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "BD-01"
+      ]
+    },
+    {
+      "id": "BD-07",
+      "epic": "Quadros",
+      "title": "Swimlanes (responsável, prioridade, épico)",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CD-04"
+      ]
+    },
+    {
+      "id": "BD-08",
+      "epic": "Quadros",
+      "title": "Arquivamento automático de concluídos após N dias, com busca",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "TD-02",
+        "EV-01"
+      ]
+    },
+    {
+      "id": "BD-09",
+      "epic": "Quadros",
+      "title": "Operadores na busca (responsavel:ana prazo:<7d)",
+      "release": "V2",
+      "stage": null,
+      "status": "partial",
+      "depends_on": [
+        "VW-01"
+      ],
+      "already_done": "Busca textual global já existe"
+    },
+    {
+      "id": "CD-09",
+      "epic": "Cartões",
+      "title": "Checklist promovível a cartão (ponte entre o checklist atual e CD-03)",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CD-03"
+      ]
+    },
+    {
+      "id": "CD-10",
+      "epic": "Cartões",
+      "title": "Regras de fechamento do pai (avisar ou bloquear com filhos abertos)",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CD-05"
+      ]
+    },
+    {
+      "id": "CD-11",
+      "epic": "Cartões",
+      "title": "Desbloqueio automático com notificação ao responsável",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CD-06",
+        "NT-01"
+      ]
+    },
+    {
+      "id": "CD-12",
+      "epic": "Cartões",
+      "title": "Visão em árvore (épico, história, tarefa)",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CD-04"
+      ]
+    },
+    {
+      "id": "PM-01",
+      "epic": "Permissões",
+      "title": "Equipes/grupos como nível intermediário de acesso",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "BD-02"
+      ]
+    },
+    {
+      "id": "PM-02",
+      "epic": "Permissões",
+      "title": "Owner do workspace vê lista e metadados de todos os quadros e pode se promover a membro, com registro em auditoria",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "EV-02"
+      ]
+    },
+    {
+      "id": "PM-03",
+      "epic": "Permissões",
+      "title": "Link público somente leitura, com expiração",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "BD-03"
+      ]
+    },
+    {
+      "id": "NT-03",
+      "epic": "Notificações",
+      "title": "Digest diário ou semanal",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "NT-01"
+      ]
+    },
+    {
+      "id": "NT-04",
+      "epic": "Notificações",
+      "title": "Agrupamento de notificações e central com filtros",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "NT-01"
+      ]
+    },
+    {
+      "id": "NT-05",
+      "epic": "Notificações",
+      "title": "Horário de silêncio e modo \"não perturbe\"",
+      "release": "V2",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "NT-01"
+      ]
+    },
+    {
+      "id": "CP-01",
+      "epic": "Carga e capacidade",
+      "title": "Capacidade configurável por pessoa e período",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CD-08"
+      ]
+    },
+    {
+      "id": "CP-02",
+      "epic": "Carga e capacidade",
+      "title": "Visão de carga por pessoa",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CP-01"
+      ]
+    },
+    {
+      "id": "CP-03",
+      "epic": "Carga e capacidade",
+      "title": "Alerta de sobrecarga ao atribuir",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CP-01"
+      ]
+    },
+    {
+      "id": "CP-04",
+      "epic": "Carga e capacidade",
+      "title": "Agenda por pessoa com conflitos de prazo",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CP-02"
+      ]
+    },
+    {
+      "id": "TM-01",
+      "epic": "Tempo",
+      "title": "Timer no cartão e lançamento manual de horas",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CD-08"
+      ]
+    },
+    {
+      "id": "TM-02",
+      "epic": "Tempo",
+      "title": "Estimado vs. realizado, com desvio",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "TM-01"
+      ]
+    },
+    {
+      "id": "TM-03",
+      "epic": "Tempo",
+      "title": "Relatório de horas por pessoa, projeto e período",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "TM-01"
+      ]
+    },
+    {
+      "id": "TM-04",
+      "epic": "Tempo",
+      "title": "Timer automático opcional (opt-in)",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "TM-01"
+      ]
+    },
+    {
+      "id": "PM-04",
+      "epic": "Permissões",
+      "title": "Visibilidade por cartão (privado ou restrito)",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "BD-04"
+      ]
+    },
+    {
+      "id": "PM-05",
+      "epic": "Permissões",
+      "title": "Campos restritos por papel (esconder estimativa, horas, custo de cliente)",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "BD-04"
+      ]
+    },
+    {
+      "id": "PM-06",
+      "epic": "Permissões",
+      "title": "Permissão por ação (mover, apagar, arquivar, alterar prazo)",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "BD-04"
+      ]
+    },
+    {
+      "id": "PM-07",
+      "epic": "Permissões",
+      "title": "Papéis customizados",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "BD-04"
+      ]
+    },
+    {
+      "id": "WS-07",
+      "epic": "Workspace",
+      "title": "Hierarquia de workspaces (empresa, departamento) com visão consolidada",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "WS-01"
+      ]
+    },
+    {
+      "id": "WS-08",
+      "epic": "Workspace",
+      "title": "SSO e provisionamento automático",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "WS-03"
+      ]
+    },
+    {
+      "id": "CD-13",
+      "epic": "Cartões",
+      "title": "Visão de caminho crítico",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "CD-06"
+      ]
+    },
+    {
+      "id": "VW-03",
+      "epic": "Visões",
+      "title": "Visões alternativas: lista, tabela, calendário, linha do tempo",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "VW-01"
+      ]
+    },
+    {
+      "id": "SP-05",
+      "epic": "Sprints",
+      "title": "Retrospectiva e ciclos leves (semana, mês)",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "SP-03"
+      ]
+    },
+    {
+      "id": "RP-05",
+      "epic": "Relatórios",
+      "title": "Histórico de precisão das estimativas por pessoa e tipo de tarefa",
+      "release": "V3",
+      "stage": null,
+      "status": "todo",
+      "depends_on": [
+        "TM-02"
+      ]
+    }
+  ]
+}
