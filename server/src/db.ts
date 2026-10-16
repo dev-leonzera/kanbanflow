@@ -73,6 +73,9 @@ function migrateSchemaAndExistingData() {
     if (!colInfo.some(c => c.name === 'archived_at')) {
       db.exec('ALTER TABLE columns ADD COLUMN archived_at TEXT;');
     }
+    if (!colInfo.some(c => c.name === 'wip_limit')) {
+      db.exec('ALTER TABLE columns ADD COLUMN wip_limit INTEGER DEFAULT NULL;');
+    }
   }
 
   // 2. Garante colunas de soft delete e assignee na tabela cards (TD-02)
@@ -92,6 +95,37 @@ function migrateSchemaAndExistingData() {
     }
     if (!cardInfo.some(c => c.name === 'type')) {
       db.exec("ALTER TABLE cards ADD COLUMN type TEXT NOT NULL DEFAULT 'TASK';");
+    }
+    if (!cardInfo.some(c => c.name === 'estimate')) {
+      db.exec('ALTER TABLE cards ADD COLUMN estimate TEXT;');
+    }
+    if (!cardInfo.some(c => c.name === 'visibility')) {
+      db.exec("ALTER TABLE cards ADD COLUMN visibility TEXT NOT NULL DEFAULT 'NORMAL';");
+    }
+    if (!cardInfo.some(c => c.name === 'restricted_to_role')) {
+      db.exec('ALTER TABLE cards ADD COLUMN restricted_to_role TEXT DEFAULT NULL;');
+    }
+  }
+
+  // Garante colunas de configurações de notificação e timer automático (TM-04)
+  const notifSettingsCols = queryAll<{ name: string }>('PRAGMA table_info(user_notification_settings)');
+  if (notifSettingsCols.length > 0) {
+    if (!notifSettingsCols.some(c => c.name === 'auto_timer_enabled')) {
+      db.exec('ALTER TABLE user_notification_settings ADD COLUMN auto_timer_enabled INTEGER NOT NULL DEFAULT 0;');
+    }
+  }
+
+  // Garante colunas de SSO na tabela workspaces (WS-08)
+  const wsCols = queryAll<{ name: string }>('PRAGMA table_info(workspaces)');
+  if (wsCols.length > 0) {
+    if (!wsCols.some(c => c.name === 'sso_enabled')) {
+      db.exec('ALTER TABLE workspaces ADD COLUMN sso_enabled INTEGER NOT NULL DEFAULT 0;');
+    }
+    if (!wsCols.some(c => c.name === 'sso_provider')) {
+      db.exec('ALTER TABLE workspaces ADD COLUMN sso_provider TEXT DEFAULT NULL;');
+    }
+    if (!wsCols.some(c => c.name === 'sso_domain')) {
+      db.exec('ALTER TABLE workspaces ADD COLUMN sso_domain TEXT DEFAULT NULL;');
     }
   }
 
@@ -124,6 +158,8 @@ function migrateSchemaAndExistingData() {
           workspace_id TEXT NOT NULL,
           user_id TEXT,
           title TEXT NOT NULL,
+          visibility TEXT NOT NULL DEFAULT 'WORKSPACE',
+          estimate_type TEXT NOT NULL DEFAULT 'POINTS',
           is_archived INTEGER NOT NULL DEFAULT 0,
           archived_at TEXT,
           created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -149,7 +185,7 @@ function migrateSchemaAndExistingData() {
         }
 
         run(
-          'INSERT INTO boards_new (id, workspace_id, user_id, title, is_archived, archived_at, created_at) VALUES (?, ?, ?, ?, 0, NULL, ?)',
+          "INSERT INTO boards_new (id, workspace_id, user_id, title, visibility, estimate_type, is_archived, archived_at, created_at) VALUES (?, ?, ?, ?, 'WORKSPACE', 'POINTS', 0, NULL, ?)",
           [b.id, wsId, b.user_id, b.title, b.created_at || new Date().toISOString()]
         );
       }
@@ -161,12 +197,50 @@ function migrateSchemaAndExistingData() {
       db.exec('PRAGMA foreign_keys = ON;');
     }
   } else if (boardCols.length > 0) {
-    // Se a coluna workspace_id já existe, garante is_archived e archived_at
+    // Se a coluna workspace_id já existe, garante is_archived, archived_at, visibility e estimate_type
     if (!boardCols.some(c => c.name === 'is_archived')) {
       db.exec('ALTER TABLE boards ADD COLUMN is_archived INTEGER NOT NULL DEFAULT 0;');
     }
     if (!boardCols.some(c => c.name === 'archived_at')) {
       db.exec('ALTER TABLE boards ADD COLUMN archived_at TEXT;');
+    }
+    if (!boardCols.some(c => c.name === 'visibility')) {
+      db.exec("ALTER TABLE boards ADD COLUMN visibility TEXT NOT NULL DEFAULT 'WORKSPACE';");
+    }
+    if (!boardCols.some(c => c.name === 'estimate_type')) {
+      db.exec("ALTER TABLE boards ADD COLUMN estimate_type TEXT NOT NULL DEFAULT 'POINTS';");
+    }
+    if (!boardCols.some(c => c.name === 'auto_archive_days')) {
+      db.exec('ALTER TABLE boards ADD COLUMN auto_archive_days INTEGER DEFAULT NULL;');
+    }
+    if (!boardCols.some(c => c.name === 'public_share_token')) {
+      db.exec('ALTER TABLE boards ADD COLUMN public_share_token TEXT DEFAULT NULL;');
+    }
+    if (!boardCols.some(c => c.name === 'public_share_expires_at')) {
+      db.exec('ALTER TABLE boards ADD COLUMN public_share_expires_at TEXT DEFAULT NULL;');
+    }
+  }
+
+  // 5. Garante que todo quadro possua pelo menos um OWNER em board_members (BD-02)
+  const boardsWithoutMembers = queryAll<{ id: string; user_id: string | null; workspace_id: string }>(`
+    SELECT b.id, b.user_id, b.workspace_id
+    FROM boards b
+    WHERE NOT EXISTS (
+      SELECT 1 FROM board_members bm WHERE bm.board_id = b.id
+    )
+  `);
+
+  for (const b of boardsWithoutMembers) {
+    let ownerId = b.user_id;
+    if (!ownerId) {
+      const wsOwner = queryOne<{ user_id: string }>(
+        "SELECT user_id FROM workspace_members WHERE workspace_id = ? AND role = 'OWNER' LIMIT 1",
+        [b.workspace_id]
+      );
+      ownerId = wsOwner?.user_id || null;
+    }
+    if (ownerId) {
+      run('INSERT OR IGNORE INTO board_members (board_id, user_id, role) VALUES (?, ?, ?)', [b.id, ownerId, 'OWNER']);
     }
   }
 }
@@ -188,6 +262,39 @@ export function run(sql: string, params: any[] = []): { changes: number | bigint
   const sanitized = params.map(p => (p === undefined ? null : p));
   const stmt = db.prepare(sql);
   return stmt.run(...sanitized);
+}
+
+// EV-02: Registro de auditoria básico (quem mudou o quê)
+export function logAudit(params: {
+  workspaceId?: string | null;
+  boardId?: string | null;
+  userId: string;
+  action: string;
+  targetType: string;
+  targetId?: string | null;
+  details?: string | Record<string, any> | null;
+}) {
+  const auditId = crypto.randomUUID();
+  const detailsStr =
+    params.details && typeof params.details === 'object'
+      ? JSON.stringify(params.details)
+      : (params.details as string | null) || null;
+
+  run(
+    `INSERT INTO audit_logs (id, workspace_id, board_id, user_id, action, target_type, target_id, details, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+    [
+      auditId,
+      params.workspaceId || null,
+      params.boardId || null,
+      params.userId,
+      params.action,
+      params.targetType,
+      params.targetId || null,
+      detailsStr,
+    ]
+  );
+  return auditId;
 }
 
 // EV-01: Registro central de eventos em cartões
@@ -231,10 +338,10 @@ export function getUserPrimaryWorkspace(userId: string): { id: string; name: str
   );
 
   if (!ws) {
-    const user = queryOne<{ name: string }>('SELECT name FROM users WHERE id = ?', [userId]);
+    const user = queryOne<{ name: string; email?: string }>('SELECT name, email FROM users WHERE id = ?', [userId]);
     const wsId = crypto.randomUUID();
     const wsName = `Workspace de ${user?.name || 'Projetos'}`;
-    run('INSERT INTO workspaces (id, name) VALUES (?, ?)', [wsId, wsName]);
+    run('INSERT INTO workspaces (id, name, billing_email) VALUES (?, ?, ?)', [wsId, wsName, user?.email || null]);
     run('INSERT INTO workspace_members (workspace_id, user_id, role) VALUES (?, ?, ?)', [wsId, userId, 'OWNER']);
     ws = { id: wsId, name: wsName };
   }
@@ -250,8 +357,12 @@ export function createDefaultBoardForUser(userId: string, targetWorkspaceId?: st
 
   const boardId = crypto.randomUUID();
   run(
-    'INSERT INTO boards (id, workspace_id, user_id, title) VALUES (?, ?, ?, ?)',
+    "INSERT INTO boards (id, workspace_id, user_id, title, visibility) VALUES (?, ?, ?, ?, 'WORKSPACE')",
     [boardId, workspace.id, userId, 'Meu Quadro']
+  );
+  run(
+    "INSERT OR IGNORE INTO board_members (board_id, user_id, role) VALUES (?, ?, 'OWNER')",
+    [boardId, userId]
   );
 
   const colTodoId = crypto.randomUUID();

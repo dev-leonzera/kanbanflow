@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card, CardType, Priority, Subtask } from '../types';
+import { Card, CardType, Priority, Subtask, EstimateType } from '../types';
 import {
   Calendar,
   CheckSquare,
@@ -15,11 +15,19 @@ import {
   Bug,
   CornerDownRight,
   GitBranch,
+  ShieldAlert,
+  MessageSquare,
+  Paperclip,
+  Gauge,
+  Clock,
+  Flame,
+  Lock,
 } from 'lucide-react';
 
 interface CardItemProps {
   card: Card;
   columnTitle: string;
+  estimateType?: EstimateType;
   onView: (card: Card) => void;
   onEdit: (card: Card) => void;
   onDelete: (cardId: string) => void;
@@ -29,6 +37,7 @@ interface CardItemProps {
 export const CardItem: React.FC<CardItemProps> = ({
   card,
   columnTitle,
+  estimateType = 'POINTS',
   onView,
   onEdit,
   onDelete,
@@ -124,6 +133,13 @@ export const CardItem: React.FC<CardItemProps> = ({
 
   const priorityBadge = getPriorityBadge(card.priority);
 
+  const formatEstimateLabel = (est: string | null | undefined) => {
+    if (!est) return null;
+    if (estimateType === 'POINTS') return `${est} pts`;
+    if (estimateType === 'HOURS') return `${est}h`;
+    return `Tam. ${est}`;
+  };
+
   // Due Date calculation
   const getDueDateInfo = (dueDateStr: string | null) => {
     if (!dueDateStr) return null;
@@ -188,6 +204,8 @@ export const CardItem: React.FC<CardItemProps> = ({
   };
 
   const TypeIcon = typeBadge.Icon;
+  const isBlocked = Boolean(card.is_blocked);
+  const estimateLabel = formatEstimateLabel(card.estimate);
 
   return (
     <div
@@ -197,13 +215,71 @@ export const CardItem: React.FC<CardItemProps> = ({
       {...listeners}
       onPointerDown={handlePointerDown}
       onClick={handleClick}
-      className={`group relative bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-indigo-500/50 rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer active:cursor-grabbing select-none ${
+      className={`group relative bg-slate-800 hover:bg-slate-750 border rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer active:cursor-grabbing select-none ${
+        isBlocked
+          ? 'border-rose-500/60 bg-rose-950/10 hover:border-rose-400'
+          : card.is_critical_path
+          ? 'border-amber-500/60 bg-amber-950/10 hover:border-amber-400 ring-1 ring-amber-500/40'
+          : 'border-slate-700 hover:border-indigo-500/50'
+      } ${
         isDragging ? 'opacity-40 scale-95 border-indigo-500 ring-2 ring-indigo-500/50 cursor-grabbing' : ''
       }`}
     >
       {/* Top row: Badges & Actions */}
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-1.5 flex-wrap">
+          {/* CD-13: Caminho Crítico */}
+          {card.is_critical_path && (
+            <span
+              title="Este cartão faz parte do Caminho Crítico do projeto"
+              className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/25 text-amber-300 border border-amber-500/50 flex items-center gap-1 shadow-sm"
+            >
+              <Flame className="w-3 h-3 text-amber-400" />
+              <span>Crítico</span>
+            </span>
+          )}
+
+          {/* TM-01 / TM-04: Timer Ativo */}
+          {card.active_timer && (
+            <span
+              title="Cronômetro rodando neste cartão"
+              className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 border border-emerald-500/50 flex items-center gap-1 animate-pulse"
+            >
+              <Clock className="w-3 h-3 text-emerald-400" />
+              <span>Gravando</span>
+            </span>
+          )}
+
+          {/* PM-04: Visibilidade Privada / Restrita */}
+          {card.visibility === 'PRIVATE' && (
+            <span
+              title="Cartão privado"
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1"
+            >
+              <Lock className="w-3 h-3 text-purple-400" />
+              <span>Privado</span>
+            </span>
+          )}
+          {card.visibility === 'RESTRICTED' && (
+            <span
+              title={`Restrito a ${card.restricted_to_role || 'papel'}`}
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1"
+            >
+              <Lock className="w-3 h-3 text-indigo-400" />
+              <span>{card.restricted_to_role}</span>
+            </span>
+          )}
+          {/* CD-07: Indicador visual de bloqueio */}
+          {isBlocked && (
+            <span
+              title={`Bloqueado por: ${card.blocked_by?.map(b => b.title).join(', ')}`}
+              className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-500/25 text-rose-300 border border-rose-500/50 flex items-center gap-1 animate-pulse"
+            >
+              <ShieldAlert className="w-3 h-3" />
+              <span>Bloqueado</span>
+            </span>
+          )}
+
           {/* Tipo do Cartão (CD-04) */}
           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border flex items-center gap-1 ${typeBadge.color}`}>
             <TypeIcon className="w-3 h-3" />
@@ -214,6 +290,17 @@ export const CardItem: React.FC<CardItemProps> = ({
           <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md border ${priorityBadge.color}`}>
             {priorityBadge.label}
           </span>
+
+          {/* CD-08: Estimativa */}
+          {estimateLabel && (
+            <span
+              title="Estimativa da tarefa"
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 flex items-center gap-1"
+            >
+              <Gauge className="w-2.5 h-2.5" />
+              <span>{estimateLabel}</span>
+            </span>
+          )}
 
           {/* Tag */}
           {card.tag && (
@@ -309,7 +396,6 @@ export const CardItem: React.FC<CardItemProps> = ({
           {/* Subtasks and Children expanded preview */}
           {showSubtasks && (
             <div className="mt-2.5 pt-2 border-t border-slate-700/60 space-y-1.5">
-              {/* Checklists inline */}
               {subtasks.map((st: Subtask) => (
                 <label
                   key={st.id}
@@ -329,7 +415,6 @@ export const CardItem: React.FC<CardItemProps> = ({
                 </label>
               ))}
 
-              {/* Child cards preview (CD-03) */}
               {childrenCards.map(child => (
                 <div
                   key={child.id}
@@ -349,12 +434,34 @@ export const CardItem: React.FC<CardItemProps> = ({
         </div>
       )}
 
-      {/* Bottom row: Description indicator, Due Date and Assignee */}
+      {/* Bottom row: Description, Comments, Attachments, Children, Due Date and Assignee */}
       <div className="flex items-center justify-between gap-2 text-xs pt-1 border-t border-slate-700/40">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {card.description && (
             <span title="Este cartão possui descrição detalhada" className="text-slate-400 hover:text-slate-300">
               <AlignLeft className="w-3.5 h-3.5" />
+            </span>
+          )}
+
+          {/* CD-02: Contador de comentários */}
+          {(card.comments_count || 0) > 0 && (
+            <span
+              title={`${card.comments_count} comentário(s)`}
+              className="flex items-center gap-1 text-[11px] text-slate-300 bg-slate-900/60 px-1.5 py-0.5 rounded border border-slate-700/60"
+            >
+              <MessageSquare className="w-3 h-3 text-indigo-400" />
+              <span>{card.comments_count}</span>
+            </span>
+          )}
+
+          {/* CD-02: Contador de anexos */}
+          {(card.attachments_count || 0) > 0 && (
+            <span
+              title={`${card.attachments_count} anexo(s)`}
+              className="flex items-center gap-1 text-[11px] text-slate-300 bg-slate-900/60 px-1.5 py-0.5 rounded border border-slate-700/60"
+            >
+              <Paperclip className="w-3 h-3 text-emerald-400" />
+              <span>{card.attachments_count}</span>
             </span>
           )}
 
@@ -362,6 +469,17 @@ export const CardItem: React.FC<CardItemProps> = ({
             <span title={`${childrenCards.length} cartões-filhos vinculados`} className="flex items-center gap-1 text-[11px] text-indigo-300 bg-indigo-950/40 px-1.5 py-0.5 rounded border border-indigo-700/40">
               <GitBranch className="w-3 h-3" />
               <span>{childrenCards.length}</span>
+            </span>
+          )}
+
+          {/* TM-01 / TM-02: Total de horas apontadas */}
+          {(card.spent_hours || 0) > 0 && (
+            <span
+              title={`Tempo gasto: ${card.spent_hours}h`}
+              className="flex items-center gap-1 text-[11px] text-cyan-300 bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-700/40"
+            >
+              <Clock className="w-3 h-3 text-cyan-400" />
+              <span>{card.spent_hours}h</span>
             </span>
           )}
 

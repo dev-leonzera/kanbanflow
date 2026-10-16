@@ -12,6 +12,11 @@ import columnsRoutes from './routes/columns.js';
 import cardsRoutes from './routes/cards.js';
 import subtasksRoutes from './routes/subtasks.js';
 import workspaceRoutes from './routes/workspaces.js';
+import notificationsRoutes from './routes/notifications.js';
+import sprintsRoutes from './routes/sprints.js';
+import reportsRoutes from './routes/reports.js';
+import teamsRoutes from './routes/teams.js';
+import capacityRoutes from './routes/capacity.js';
 
 import { csrfProtection } from './middleware/csrf.js';
 
@@ -28,7 +33,7 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: '5mb' }));
 app.use(csrfProtection);
 
 // Rotas da API
@@ -42,6 +47,11 @@ app.use('/api/board', boardRoutes);
 app.use('/api/columns', columnsRoutes);
 app.use('/api/cards', cardsRoutes);
 app.use('/api/subtasks', subtasksRoutes);
+app.use('/api/notifications', notificationsRoutes);
+app.use('/api/sprints', sprintsRoutes);
+app.use('/api/reports', reportsRoutes);
+app.use('/api/teams', teamsRoutes);
+app.use('/api/capacity', capacityRoutes);
 
 // Servir frontend compilado em produção (se a pasta dist existir)
 const webDistPath = path.resolve(__dirname, '../../web/dist');

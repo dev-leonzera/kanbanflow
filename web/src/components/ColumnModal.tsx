@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 interface ColumnModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (title: string) => Promise<void>;
+  onSave: (title: string, wipLimit?: number | null) => Promise<void>;
 }
 
 export const ColumnModal: React.FC<ColumnModalProps> = ({
@@ -13,6 +13,7 @@ export const ColumnModal: React.FC<ColumnModalProps> = ({
   onSave,
 }) => {
   const [title, setTitle] = useState('');
+  const [wipLimit, setWipLimit] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,8 +29,10 @@ export const ColumnModal: React.FC<ColumnModalProps> = ({
     try {
       setLoading(true);
       setError(null);
-      await onSave(title.trim());
+      const parsedWip = wipLimit.trim() ? parseInt(wipLimit, 10) : null;
+      await onSave(title.trim(), isNaN(parsedWip as any) ? null : parsedWip);
       setTitle('');
+      setWipLimit('');
       onClose();
     } catch (err: any) {
       setError(err.message || 'Falha ao criar coluna.');
@@ -71,6 +74,23 @@ export const ColumnModal: React.FC<ColumnModalProps> = ({
               onChange={e => setTitle(e.target.value)}
               className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition"
             />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              Limite WIP (Opcional)
+            </label>
+            <input
+              type="number"
+              min="1"
+              placeholder="Ex: 3 (deixe vazio para sem limite)"
+              value={wipLimit}
+              onChange={e => setWipLimit(e.target.value)}
+              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition"
+            />
+            <p className="text-[11px] text-slate-500 mt-1">
+              Alerta visualmente a equipe caso a coluna exceda a quantidade máxima de cartões recomendada.
+            </p>
           </div>
 
           <div className="pt-2 flex items-center justify-end gap-3">

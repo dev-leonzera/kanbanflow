@@ -122,7 +122,7 @@
       "title": "Função central can(user, action, resource), com papéis como conjunto de permissões",
       "release": "MVP",
       "stage": "Etapa 3: Permissões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "WS-02"
       ]
@@ -133,7 +133,7 @@
       "title": "Papéis do workspace: Owner, Admin, Membro, Convidado",
       "release": "MVP",
       "stage": "Etapa 3: Permissões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-04"
       ]
@@ -144,7 +144,7 @@
       "title": "Múltiplos owners e regra do último owner",
       "release": "MVP",
       "stage": "Etapa 3: Permissões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "WS-03"
       ]
@@ -155,7 +155,7 @@
       "title": "Transferência de propriedade com confirmação",
       "release": "MVP",
       "stage": "Etapa 3: Permissões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "WS-04"
       ]
@@ -166,7 +166,7 @@
       "title": "Contato de cobrança como campo separado do owner",
       "release": "MVP",
       "stage": "Etapa 3: Permissões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "WS-01"
       ]
@@ -177,7 +177,7 @@
       "title": "Papéis do quadro: Owner, Editor, Comentarista, Leitor",
       "release": "MVP",
       "stage": "Etapa 3: Permissões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-04"
       ]
@@ -188,7 +188,7 @@
       "title": "Visibilidade do quadro: privado ou visível ao workspace",
       "release": "MVP",
       "stage": "Etapa 3: Permissões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-02"
       ]
@@ -199,7 +199,7 @@
       "title": "Convidado externo restrito aos quadros compartilhados",
       "release": "MVP",
       "stage": "Etapa 3: Permissões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-02",
         "WS-03"
@@ -211,7 +211,7 @@
       "title": "Log de auditoria básico (quem mudou o quê)",
       "release": "MVP",
       "stage": "Etapa 3: Permissões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "EV-01"
       ]
@@ -222,7 +222,7 @@
       "title": "Comentários e anexos nos cartões",
       "release": "MVP",
       "stage": "Etapa 4: Cartões e visões",
-      "status": "partial",
+      "status": "done",
       "depends_on": [
         "BD-02"
       ],
@@ -234,7 +234,7 @@
       "title": "Campo de estimativa configurável (pontos, horas ou P/M/G)",
       "release": "MVP",
       "stage": "Etapa 4: Cartões e visões",
-      "status": "todo",
+      "status": "done",
       "depends_on": []
     },
     {
@@ -243,7 +243,7 @@
       "title": "Relações entre cartões (bloqueia, relacionado, duplicado) com detecção de ciclos",
       "release": "MVP",
       "stage": "Etapa 4: Cartões e visões",
-      "status": "todo",
+      "status": "done",
       "depends_on": []
     },
     {
@@ -252,7 +252,7 @@
       "title": "Indicador visual de bloqueio e aviso ao mover cartão bloqueado",
       "release": "MVP",
       "stage": "Etapa 4: Cartões e visões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-06"
       ]
@@ -263,7 +263,7 @@
       "title": "Salvar e nomear filtros",
       "release": "MVP",
       "stage": "Etapa 4: Cartões e visões",
-      "status": "partial",
+      "status": "done",
       "depends_on": [],
       "already_done": "Filtros por prioridade e responsável já existem, sem persistência"
     },
@@ -273,7 +273,7 @@
       "title": "Tela agregada \"Meu dia\", com cartões de todos os quadros",
       "release": "MVP",
       "stage": "Etapa 4: Cartões e visões",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-01"
       ]
@@ -284,7 +284,7 @@
       "title": "Preferências de notificação por tipo de evento e por canal",
       "release": "MVP",
       "stage": "Etapa 5: Notificações",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-02"
       ]
@@ -295,7 +295,7 @@
       "title": "Nível de inscrição por cartão ou quadro (todas, só menções, nenhuma)",
       "release": "MVP",
       "stage": "Etapa 5: Notificações",
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "NT-01"
       ]
@@ -306,7 +306,7 @@
       "title": "Entidade Sprint (nome, datas, meta, status)",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-08"
       ]
@@ -317,7 +317,7 @@
       "title": "Backlog separado e planejamento arrastando cartões para o sprint",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "SP-01"
       ]
@@ -328,7 +328,7 @@
       "title": "Encerramento guiado (incompletos voltam ao backlog ou vão para o próximo)",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "SP-01"
       ]
@@ -339,7 +339,7 @@
       "title": "Relatório de sprint: planejado vs. entregue",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "SP-03",
         "EV-01"
@@ -351,7 +351,7 @@
       "title": "Cycle time e lead time por cartão e por tipo",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "EV-01"
       ]
@@ -362,7 +362,7 @@
       "title": "Burndown/burnup e velocity",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "SP-01",
         "EV-01"
@@ -374,7 +374,7 @@
       "title": "Diagrama de fluxo cumulativo e tempo médio por coluna",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "EV-01"
       ]
@@ -385,7 +385,7 @@
       "title": "Throughput semanal e exportação CSV",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "EV-01"
       ]
@@ -396,7 +396,7 @@
       "title": "Limite WIP por coluna com alerta visual",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-01"
       ]
@@ -407,7 +407,7 @@
       "title": "Swimlanes (responsável, prioridade, épico)",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-04"
       ]
@@ -418,7 +418,7 @@
       "title": "Arquivamento automático de concluídos após N dias, com busca",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "TD-02",
         "EV-01"
@@ -430,7 +430,7 @@
       "title": "Operadores na busca (responsavel:ana prazo:<7d)",
       "release": "V2",
       "stage": null,
-      "status": "partial",
+      "status": "done",
       "depends_on": [
         "VW-01"
       ],
@@ -442,7 +442,7 @@
       "title": "Checklist promovível a cartão (ponte entre o checklist atual e CD-03)",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-03"
       ]
@@ -453,7 +453,7 @@
       "title": "Regras de fechamento do pai (avisar ou bloquear com filhos abertos)",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-05"
       ]
@@ -464,7 +464,7 @@
       "title": "Desbloqueio automático com notificação ao responsável",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-06",
         "NT-01"
@@ -476,7 +476,7 @@
       "title": "Visão em árvore (épico, história, tarefa)",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-04"
       ]
@@ -487,7 +487,7 @@
       "title": "Equipes/grupos como nível intermediário de acesso",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-02"
       ]
@@ -498,7 +498,7 @@
       "title": "Owner do workspace vê lista e metadados de todos os quadros e pode se promover a membro, com registro em auditoria",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "EV-02"
       ]
@@ -509,7 +509,7 @@
       "title": "Link público somente leitura, com expiração",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-03"
       ]
@@ -520,7 +520,7 @@
       "title": "Digest diário ou semanal",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "NT-01"
       ]
@@ -531,7 +531,7 @@
       "title": "Agrupamento de notificações e central com filtros",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "NT-01"
       ]
@@ -542,7 +542,7 @@
       "title": "Horário de silêncio e modo \"não perturbe\"",
       "release": "V2",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "NT-01"
       ]
@@ -553,7 +553,7 @@
       "title": "Capacidade configurável por pessoa e período",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-08"
       ]
@@ -564,7 +564,7 @@
       "title": "Visão de carga por pessoa",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CP-01"
       ]
@@ -575,7 +575,7 @@
       "title": "Alerta de sobrecarga ao atribuir",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CP-01"
       ]
@@ -586,7 +586,7 @@
       "title": "Agenda por pessoa com conflitos de prazo",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CP-02"
       ]
@@ -597,7 +597,7 @@
       "title": "Timer no cartão e lançamento manual de horas",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-08"
       ]
@@ -608,7 +608,7 @@
       "title": "Estimado vs. realizado, com desvio",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "TM-01"
       ]
@@ -619,7 +619,7 @@
       "title": "Relatório de horas por pessoa, projeto e período",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "TM-01"
       ]
@@ -630,7 +630,7 @@
       "title": "Timer automático opcional (opt-in)",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "TM-01"
       ]
@@ -641,7 +641,7 @@
       "title": "Visibilidade por cartão (privado ou restrito)",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-04"
       ]
@@ -652,7 +652,7 @@
       "title": "Campos restritos por papel (esconder estimativa, horas, custo de cliente)",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-04"
       ]
@@ -663,7 +663,7 @@
       "title": "Permissão por ação (mover, apagar, arquivar, alterar prazo)",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-04"
       ]
@@ -674,7 +674,7 @@
       "title": "Papéis customizados",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "BD-04"
       ]
@@ -685,7 +685,7 @@
       "title": "Hierarquia de workspaces (empresa, departamento) com visão consolidada",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "WS-01"
       ]
@@ -696,7 +696,7 @@
       "title": "SSO e provisionamento automático",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "WS-03"
       ]
@@ -707,7 +707,7 @@
       "title": "Visão de caminho crítico",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "CD-06"
       ]
@@ -718,7 +718,7 @@
       "title": "Visões alternativas: lista, tabela, calendário, linha do tempo",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "VW-01"
       ]
@@ -729,7 +729,7 @@
       "title": "Retrospectiva e ciclos leves (semana, mês)",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "SP-03"
       ]
@@ -740,9 +740,22 @@
       "title": "Histórico de precisão das estimativas por pessoa e tipo de tarefa",
       "release": "V3",
       "stage": null,
-      "status": "todo",
+      "status": "done",
       "depends_on": [
         "TM-02"
+      ]
+    },
+    {
+      "id": "CF-01",
+      "epic": "Configurações",
+      "title": "Painel Único de Configurações unificado e hierárquico por nível (Usuário, Workspace, Quadro e Fluxo/Colunas)",
+      "release": "V2",
+      "stage": "Etapa 4: Configurações e Governança",
+      "status": "done",
+      "depends_on": [
+        "WS-03",
+        "BD-02",
+        "NT-02"
       ]
     }
   ]

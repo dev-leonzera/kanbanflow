@@ -1,13 +1,15 @@
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Column as ColumnType, Card } from '../types';
+import { Column as ColumnType, Card, EstimateType } from '../types';
 import { CardItem } from './CardItem';
 import { Plus, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ColumnProps {
   column: ColumnType;
   cards: Card[];
+  droppableId?: string;
+  estimateType?: EstimateType;
   onOpenNewCardModal: (columnId: string) => void;
   onViewCard: (card: Card) => void;
   onEditCard: (card: Card) => void;
@@ -23,6 +25,8 @@ interface ColumnProps {
 export const Column: React.FC<ColumnProps> = ({
   column,
   cards,
+  droppableId,
+  estimateType = 'POINTS',
   onOpenNewCardModal,
   onViewCard,
   onEditCard,
@@ -35,7 +39,7 @@ export const Column: React.FC<ColumnProps> = ({
   canMoveRight,
 }) => {
   const { setNodeRef, isOver } = useDroppable({
-    id: column.id,
+    id: droppableId || column.id,
     data: {
       type: 'Column',
       column,
@@ -44,9 +48,15 @@ export const Column: React.FC<ColumnProps> = ({
 
   const cardIds = cards.map(c => c.id);
 
+  const isWipExceeded = Boolean(column.wip_limit && cards.length > column.wip_limit);
+
   return (
     <section
-      className="flex-shrink-0 w-80 max-h-full flex flex-col bg-slate-900/70 border border-slate-800 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm"
+      className={`flex-shrink-0 w-80 max-h-full flex flex-col bg-slate-900/70 border rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm transition-all ${
+        isWipExceeded
+          ? 'border-rose-500/60 shadow-rose-950/30 ring-1 ring-rose-500/30'
+          : 'border-slate-800'
+      }`}
     >
       {/* Column Header */}
       <div className="p-3.5 border-b border-slate-800/80 flex items-center justify-between gap-2 bg-slate-800/40">
@@ -74,9 +84,29 @@ export const Column: React.FC<ColumnProps> = ({
           <h2 className="font-bold text-sm text-slate-100 tracking-wide truncate max-w-[130px]">
             {column.title}
           </h2>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/60">
-            {cards.length}
-          </span>
+          {column.wip_limit ? (
+            <span
+              title={
+                cards.length > column.wip_limit
+                  ? `Limite WIP excedido! Máximo recomendado: ${column.wip_limit}`
+                  : `Limite WIP: ${column.wip_limit}`
+              }
+              className={`text-[11px] font-bold px-2 py-0.5 rounded-full border transition-colors flex items-center gap-1 ${
+                cards.length > column.wip_limit
+                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'
+                  : cards.length === column.wip_limit
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                  : 'bg-slate-800 text-slate-400 border-slate-700/60'
+              }`}
+            >
+              <span>{cards.length}/{column.wip_limit}</span>
+              {cards.length > column.wip_limit && <span className="text-[9px]">WIP!</span>}
+            </span>
+          ) : (
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/60">
+              {cards.length}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-1">
@@ -114,6 +144,7 @@ export const Column: React.FC<ColumnProps> = ({
               key={card.id}
               card={card}
               columnTitle={column.title}
+              estimateType={estimateType}
               onView={onViewCard}
               onEdit={onEditCard}
               onDelete={onDeleteCard}

@@ -115,5 +115,55 @@ router.get('/me', requireAuth, (req: Request, res: Response) => {
   res.json({ user: req.user });
 });
 
+const profileUpdateSchema = z.object({
+  name: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres.').optional(),
+  currentPassword: z.string().optional(),
+  newPassword: z
+    .string()
+    .min(8, 'A nova senha deve ter pelo menos 8 caracteres.')
+    .regex(/[A-Za-z]/, 'A nova senha deve conter pelo menos uma letra.')
+    .regex(/[0-9]/, 'A nova senha deve conter pelo menos um número.')
+    .optional(),
+});
+
+// PATCH /api/auth/profile
+router.patch('/profile', requireAuth, (req: Request, res: Response) => {
+  const result = profileUpdateSchema.safeParse(req.body);
+  if (!result.success) {
+    res.status(400).json({ error: result.error.errors[0]?.message || 'Dados inválidos.' });
+    return;
+  }
+
+  const userId = req.user!.id;
+  const user = queryOne<any>('SELECT * FROM users WHERE id = ?', [userId]);
+  if (!user) {
+    res.status(404).json({ error: 'Usuário não encontrado.' });
+    return;
+  }
+
+  const { name, currentPassword, newPassword } = result.data;
+
+  if (newPassword) {
+    if (!currentPassword) {
+      res.status(400).json({ error: 'Informe a senha atual para definir uma nova senha.' });
+      return;
+    }
+    if (!bcrypt.compareSync(currentPassword, user.password_hash)) {
+      res.status(400).json({ error: 'Senha atual incorreta.' });
+      return;
+    }
+    const newHash = bcrypt.hashSync(newPassword, 10);
+    run('UPDATE users SET password_hash = ? WHERE id = ?', [newHash, userId]);
+  }
+
+  if (name && name.trim() !== user.name) {
+    run('UPDATE users SET name = ? WHERE id = ?', [name.trim(), userId]);
+  }
+
+  const updatedUser = queryOne<any>('SELECT id, email, name FROM users WHERE id = ?', [userId]);
+  res.json({ user: updatedUser, message: 'Perfil atualizado com sucesso.' });
+});
+
 export default router;
+
 

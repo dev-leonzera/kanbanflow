@@ -3,10 +3,28 @@ import { useAuth } from './context/AuthContext';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { BoardView } from './components/BoardView';
+import { PublicBoardView } from './components/PublicBoardView';
 
 export const App: React.FC = () => {
   const { user, loading } = useAuth();
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+
+  const publicTokenFromUrl =
+    new URLSearchParams(window.location.search).get('publicToken') ||
+    (window.location.pathname.startsWith('/public/')
+      ? window.location.pathname.replace('/public/', '')
+      : null);
+
+  if (publicTokenFromUrl) {
+    return (
+      <PublicBoardView
+        token={publicTokenFromUrl}
+        onExitPublicView={() => {
+          window.location.href = window.location.pathname.startsWith('/public/') ? '/' : window.location.pathname;
+        }}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -27,4 +45,5 @@ export const App: React.FC = () => {
 
   return <BoardView />;
 };
+
 

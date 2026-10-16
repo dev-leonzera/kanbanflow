@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../middleware/auth.js';
 import { queryOne, run } from '../db.js';
+import { can } from '../permissions/can.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -17,15 +18,14 @@ const subtaskUpdateSchema = z.object({
   done: z.boolean().optional(),
 });
 
-function verifySubtaskOwnership(subtaskId: string, userId: string) {
-  return queryOne<{ id: string; card_id: string }>(
-    `SELECT s.id, s.card_id FROM subtasks s
+function getSubtaskContext(subtaskId: string) {
+  return queryOne<{ id: string; card_id: string; board_id: string }>(
+    `SELECT s.id, s.card_id, c.board_id
+     FROM subtasks s
      JOIN cards cd ON cd.id = s.card_id
      JOIN columns c ON c.id = cd.column_id
-     JOIN boards b ON b.id = c.board_id
-     JOIN workspace_members wm ON wm.workspace_id = b.workspace_id
-     WHERE s.id = ? AND wm.user_id = ?`,
-    [subtaskId, userId]
+     WHERE s.id = ?`,
+    [subtaskId]
   );
 }
 
@@ -40,17 +40,21 @@ router.post('/', (req: Request, res: Response) => {
   const userId = req.user!.id;
   const { cardId, title, done } = result.data;
 
-  const card = queryOne<{ id: string }>(
-    `SELECT cd.id FROM cards cd
+  const card = queryOne<{ id: string; board_id: string }>(
+    `SELECT cd.id, c.board_id
+     FROM cards cd
      JOIN columns c ON c.id = cd.column_id
-     JOIN boards b ON b.id = c.board_id
-     JOIN workspace_members wm ON wm.workspace_id = b.workspace_id
-     WHERE cd.id = ? AND wm.user_id = ?`,
-    [cardId, userId]
+     WHERE cd.id = ?`,
+    [cardId]
   );
 
   if (!card) {
     res.status(404).json({ error: 'Cartão não encontrado.' });
+    return;
+  }
+
+  if (!can(userId, 'board:edit_content', { type: 'board', id: card.board_id })) {
+    res.status(403).json({ error: 'Você não tem permissão para editar subtarefas neste quadro.' });
     return;
   }
 
@@ -86,9 +90,14 @@ router.patch('/:id', (req: Request, res: Response) => {
   const userId = req.user!.id;
   const { id } = req.params;
 
-  const subtask = verifySubtaskOwnership(id, userId);
+  const subtask = getSubtaskContext(id);
   if (!subtask) {
     res.status(404).json({ error: 'Subtarefa não encontrada.' });
+    return;
+  }
+
+  if (!can(userId, 'board:edit_content', { type: 'board', id: subtask.board_id })) {
+    res.status(403).json({ error: 'Sem permissão para atualizar subtarefas neste quadro.' });
     return;
   }
 
@@ -112,9 +121,14 @@ router.delete('/:id', (req: Request, res: Response) => {
   const userId = req.user!.id;
   const { id } = req.params;
 
-  const subtask = verifySubtaskOwnership(id, userId);
+  const subtask = getSubtaskContext(id);
   if (!subtask) {
     res.status(404).json({ error: 'Subtarefa não encontrada.' });
+    return;
+  }
+
+  if (!can(userId, 'board:edit_content', { type: 'board', id: subtask.board_id })) {
+    res.status(403).json({ error: 'Sem permissão para excluir subtarefas neste quadro.' });
     return;
   }
 
@@ -122,5 +136,79 @@ router.delete('/:id', (req: Request, res: Response) => {
   res.json({ message: 'Subtarefa excluída com sucesso.' });
 });
 
-export default router;
+// POST /api/subtasks/:id/promote (CD-09: Checklist promovível a cartão)
+router.post('/:id/promote', (req: Request, res: Response) => {
+  const userId = req.user!.id;
+  const { id } = req.params;
 
+  const subtask = queryOne<{ id: string; card_id: string; title: string; done: number }>(
+    'SELECT id, card_id, title, done FROM subtasks WHERE id = ?',
+    [id]
+  );
+
+  if (!subtask) {
+    res.status(404).json({ error: 'Subtarefa não encontrada.' });
+    return;
+  }
+
+  const parentCard = queryOne<{ id: string; column_id: string; board_id: string; workspace_id: string; priority: string; tag: string }>(
+    `SELECT cd.id, cd.column_id, c.board_id, b.workspace_id, cd.priority, cd.tag
+     FROM cards cd
+     JOIN columns c ON c.id = cd.column_id
+     JOIN boards b ON b.id = c.board_id
+     WHERE cd.id = ?`,
+    [subtask.card_id]
+  );
+
+  if (!parentCard) {
+    res.status(404).json({ error: 'Cartão pai não encontrado.' });
+    return;
+  }
+
+  if (!can(userId, 'board:edit_content', { type: 'board', id: parentCard.board_id })) {
+    res.status(403).json({ error: 'Sem permissão para promover subtarefa neste quadro.' });
+    return;
+  }
+
+  // Se a subtarefa estava concluída e existe coluna concluída, coloca nela; senão na coluna do pai
+  let targetColumnId = parentCard.column_id;
+  if (subtask.done) {
+    const doneCol = queryOne<{ id: string }>(
+      `SELECT id FROM columns 
+       WHERE board_id = ? AND (is_archived = 0 OR is_archived IS NULL)
+       AND (LOWER(title) LIKE '%conclu%' OR LOWER(title) LIKE '%done%')
+       ORDER BY position DESC LIMIT 1`,
+      [parentCard.board_id]
+    );
+    if (doneCol) {
+      targetColumnId = doneCol.id;
+    }
+  }
+
+  const maxPosRow = queryOne<{ nextPos: number }>(
+    'SELECT COALESCE(MAX(position), -1) + 1 AS nextPos FROM cards WHERE column_id = ? AND (is_archived = 0 OR is_archived IS NULL)',
+    [targetColumnId]
+  );
+  const position = maxPosRow?.nextPos ?? 0;
+  const newCardId = crypto.randomUUID();
+
+  // Cria cartão completo como SUBTASK com parent_id apontando para o cartão de origem
+  run(
+    `INSERT INTO cards (id, column_id, parent_id, type, title, description, priority, tag, position, assignee, is_archived, created_at)
+     VALUES (?, ?, ?, 'SUBTASK', ?, '', ?, ?, ?, NULL, 0, datetime('now'))`,
+    [newCardId, targetColumnId, parentCard.id, subtask.title.trim(), parentCard.priority, parentCard.tag, position]
+  );
+
+  // Remove o item do checklist promovido
+  run('DELETE FROM subtasks WHERE id = ?', [id]);
+
+  res.status(201).json({
+    message: 'Subtarefa promovida a cartão com sucesso.',
+    cardId: newCardId,
+    parentId: parentCard.id,
+    columnId: targetColumnId,
+    title: subtask.title.trim(),
+  });
+});
+
+export default router;
