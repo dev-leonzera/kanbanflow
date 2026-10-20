@@ -432,7 +432,7 @@ export const UserSettings: React.FC<UserSettingsProps> = ({
               {notifSettings && (
                 <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-4 space-y-4">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Não Perturbe & Horário de Silêncio (NT-05)
+                    Não Perturbe & Horário de Silêncio
                   </h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -497,7 +497,7 @@ export const UserSettings: React.FC<UserSettingsProps> = ({
                       <div>
                         <div className="font-semibold text-slate-200 flex items-center gap-1.5 text-xs">
                           <Clock className="w-3.5 h-3.5 text-amber-400" />
-                          Cronômetro Automático ao Mover Tarefas (TM-04)
+                          Cronômetro Automático ao Mover Tarefas
                         </div>
                         <div className="text-[11px] text-slate-400 mt-0.5">
                           Inicia automaticamente o cronômetro do cartão quando você mover uma tarefa atribuída a você para uma coluna em progresso, e encerra o cronômetro salvando as horas quando movida para conclusão.

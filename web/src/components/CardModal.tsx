@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardType,
@@ -270,26 +270,6 @@ export const CardModal: React.FC<CardModalProps> = ({
     }
   };
 
-  // Lista de candidatos a cartão pai válidos baseado nas regras de parentesco (CD-04)
-  const eligibleParents = useMemo(() => {
-    if (type === 'EPIC') return [];
-
-    return allBoardCards.filter(candidate => {
-      if (cardToEdit && candidate.id === cardToEdit.id) return false;
-      if (candidate.type === 'SUBTASK') return false;
-
-      if (type === 'STORY') {
-        return candidate.type === 'EPIC';
-      }
-      if (type === 'TASK' || type === 'BUG') {
-        return candidate.type === 'EPIC' || candidate.type === 'STORY';
-      }
-      if (type === 'SUBTASK') {
-        return candidate.type === 'TASK' || candidate.type === 'BUG' || candidate.type === 'STORY';
-      }
-      return true;
-    });
-  }, [allBoardCards, type, cardToEdit]);
 
   if (!isOpen) return null;
 
@@ -1630,8 +1610,8 @@ export const CardModal: React.FC<CardModalProps> = ({
             </div>
           )}
 
-          {/* Tipo de Cartão, Cartão Pai (CD-03, CD-04) e Sprint (SP-01, SP-02) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+          {/* Tipo de Cartão e Sprint (SP-01, SP-02) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
                 Tipo de Cartão
@@ -1648,33 +1628,11 @@ export const CardModal: React.FC<CardModalProps> = ({
                 <option value="TASK">Tarefa (Padrão)</option>
                 <option value="BUG">Bug / Defeito</option>
                 <option value="STORY">História de Usuário</option>
-                <option value="EPIC">Épico (Sem pai)</option>
-                <option value="SUBTASK">Subtarefa (Requer pai)</option>
+                <option value="EPIC">Épico</option>
+                {(parentId || type === 'SUBTASK') && (
+                  <option value="SUBTASK">Subtarefa</option>
+                )}
               </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                Cartão Pai {type === 'SUBTASK' ? '(Obrigatório)' : '(Opcional)'}
-              </label>
-              {type === 'EPIC' ? (
-                <div className="text-xs text-slate-500 italic py-2.5">
-                  Épicos são topo da hierarquia e não possuem pai.
-                </div>
-              ) : (
-                <select
-                  value={parentId || ''}
-                  onChange={e => setParentId(e.target.value || null)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition cursor-pointer"
-                >
-                  <option value="">Nenhum (Cartão Raiz)</option>
-                  {eligibleParents.map(parent => (
-                    <option key={parent.id} value={parent.id}>
-                      [{parent.type}] {parent.title}
-                    </option>
-                  ))}
-                </select>
-              )}
             </div>
 
             <div>

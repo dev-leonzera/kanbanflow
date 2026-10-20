@@ -137,7 +137,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
     { key: 'card:move', label: 'Mover Cartões', desc: 'Permite movimentar tarefas entre colunas' },
     { key: 'card:delete', label: 'Excluir Cartões', desc: 'Permite excluir ou arquivar tarefas' },
     { key: 'card:comment', label: 'Comentar', desc: 'Permite comentar e adicionar anexos' },
-    { key: 'card:time_log', label: 'Registrar Horas (TM-01)', desc: 'Permite iniciar timer e lançar horas gastas' },
+    { key: 'card:time_log', label: 'Registrar Horas', desc: 'Permite iniciar timer e lançar horas gastas' },
     { key: 'board:create', label: 'Criar Quadros', desc: 'Permite criar novos quadros no workspace' },
     { key: 'board:edit', label: 'Configurar Quadro', desc: 'Permite gerenciar colunas, WIP e automações' },
     { key: 'board:manage_members', label: 'Membros do Quadro', desc: 'Permite convidar membros para quadros' },
@@ -569,7 +569,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                Contato / E-mail de Cobrança (WS-06)
+                Contato / E-mail de Cobrança
               </label>
               <input
                 type="email"
@@ -748,7 +748,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <UserCheck className="w-5 h-5 text-indigo-400" />
-              Equipes do Workspace (PM-01)
+              Equipes do Workspace
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               Agrupe membros em equipes (ex: Design, Engenharia, QA) para atribuir permissões coletivas nos quadros.
@@ -945,7 +945,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <FolderKanban className="w-5 h-5 text-indigo-400" />
-              Governança de Quadros (PM-02)
+              Governança de Quadros
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               Visão consolidada para administradores de todos os quadros existentes no workspace.
@@ -1070,7 +1070,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition"
                   >
                     <option value="ADMIN">Permanecer como Administrador</option>
-                    <option value="OWNER">Permanecer como Co-proprietário (Multi-owner WS-04)</option>
+                    <option value="OWNER">Permanecer como Co-proprietário</option>
                   </select>
                 </div>
 
@@ -1110,7 +1110,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-indigo-400" />
-              Papéis Customizados no Workspace (PM-07)
+              Papéis Customizados no Workspace
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               Defina perfis com conjuntos granulares de permissões específicas para atribuir aos membros do espaço de trabalho.
@@ -1173,7 +1173,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-400 mb-2">
-                  Permissões Granulares (PM-06)
+                  Permissões Granulares
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-slate-900/60 border border-slate-800 rounded-lg">
                   {AVAILABLE_PERMISSIONS.map(p => {
@@ -1288,7 +1288,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <Network className="w-5 h-5 text-indigo-400" />
-              Hierarquia & Sub-Workspaces (WS-07)
+              Hierarquia & Sub-Workspaces
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               Estruturação organizacional em árvore e visão consolidada de métricas e produtividade entre workspaces dependentes.
@@ -1446,7 +1446,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <KeyRound className="w-5 h-5 text-indigo-400" />
-              Single Sign-On (SSO) & Provisionamento Automático (WS-08)
+              Single Sign-On (SSO) & Provisionamento Automático
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               Habilite autenticação corporativa via provedores de identidade SAML 2.0, OpenID Connect ou Google Workspace com auto-provisionamento de membros.
@@ -1627,7 +1627,7 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <History className="w-5 h-5 text-indigo-400" />
-              Log de Auditoria e Governança (EV-02)
+              Log de Auditoria e Governança
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               Registro cronológico imutável de ações administrativas realizadas neste Workspace.

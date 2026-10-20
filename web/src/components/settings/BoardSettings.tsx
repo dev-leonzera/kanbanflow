@@ -380,7 +380,7 @@ export const BoardSettings: React.FC<BoardSettingsProps> = ({
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
                   <Gauge className="w-3.5 h-3.5 text-cyan-400" />
-                  Métrica de Estimativa (CD-08)
+                  Métrica de Estimativa
                 </label>
                 <select
                   disabled={!canEdit}
@@ -400,7 +400,7 @@ export const BoardSettings: React.FC<BoardSettingsProps> = ({
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
                   <Bell className="w-3.5 h-3.5 text-amber-400" />
-                  Sua Inscrição no Quadro (NT-05)
+                  Sua Inscrição no Quadro
                 </label>
                 <select
                   value={subscriptionLevel}
@@ -545,7 +545,7 @@ export const BoardSettings: React.FC<BoardSettingsProps> = ({
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                   <Globe className="w-3.5 h-3.5 text-cyan-400" />
-                  Link Público Somente-Leitura (PM-03)
+                  Link Público Somente-Leitura
                 </h3>
                 <p className="text-[11px] text-slate-500 mt-0.5">
                   Permite que partes interessadas externas acompanhem o progresso em tempo real sem precisar de login.
@@ -636,7 +636,7 @@ export const BoardSettings: React.FC<BoardSettingsProps> = ({
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <Users className="w-5 h-5 text-emerald-400" />
-              Membros e Equipes do Quadro (BD-02, PM-01)
+              Membros e Equipes do Quadro
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               Atribua papéis individuais e permissões por equipe para este quadro.
@@ -771,7 +771,7 @@ export const BoardSettings: React.FC<BoardSettingsProps> = ({
           {/* Equipes vinculadas (PM-01) */}
           <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-5 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Equipes com Acesso ao Quadro (PM-01)
+              Equipes com Acesso ao Quadro
             </h3>
 
             {teamMsg && (
@@ -866,7 +866,7 @@ export const BoardSettings: React.FC<BoardSettingsProps> = ({
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <Archive className="w-5 h-5 text-emerald-400" />
-              Automações & Limpeza (BD-08)
+              Automações & Limpeza
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               Mantenha o quadro limpo arquivando tarefas concluídas após determinado período.

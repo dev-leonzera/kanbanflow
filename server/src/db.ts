@@ -196,8 +196,11 @@ function migrateSchemaAndExistingData() {
     } finally {
       db.exec('PRAGMA foreign_keys = ON;');
     }
-  } else if (boardCols.length > 0) {
-    // Se a coluna workspace_id já existe, garante is_archived, archived_at, visibility e estimate_type
+  }
+
+  if (boardCols.length > 0) {
+    // Garante colunas adicionais (inclusive após a reconstrução da tabela acima)
+    const boardCols = queryAll<{ name: string }>('PRAGMA table_info(boards)');
     if (!boardCols.some(c => c.name === 'is_archived')) {
       db.exec('ALTER TABLE boards ADD COLUMN is_archived INTEGER NOT NULL DEFAULT 0;');
     }

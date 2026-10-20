@@ -704,7 +704,7 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose, boa
                   <div className="bg-slate-950/40 p-4 rounded-xl border border-slate-800 space-y-3">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                       <Target className="w-4 h-4 text-emerald-400" />
-                      <span>Precisão das Tarefas Avaliadas (RP-05)</span>
+                      <span>Precisão das Tarefas Avaliadas</span>
                     </h4>
 
                     {accuracyReport.cards.length === 0 ? (

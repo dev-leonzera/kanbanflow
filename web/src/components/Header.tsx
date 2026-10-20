@@ -303,7 +303,7 @@ export const Header: React.FC<HeaderProps> = ({
               type="button"
               onClick={onOpenWorkloadModal}
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-emerald-300 hover:bg-emerald-500/15 transition"
-              title="Carga & Capacidade da Equipe (CP-01 a CP-04)"
+              title="Carga & Capacidade da Equipe"
             >
               <Users className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               <span>Capacidade</span>

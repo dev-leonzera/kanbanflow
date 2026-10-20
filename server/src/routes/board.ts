@@ -265,7 +265,7 @@ export function getUserBoard(userId: string, targetBoardId?: string, targetWorks
     const queryParams: any[] = [...columnIds];
 
     if (sprintId === 'BACKLOG') {
-      sprintFilterSql = 'AND (sprint_id IS NULL OR sprint_id = "")';
+      sprintFilterSql = "AND (sprint_id IS NULL OR sprint_id = '')";
     } else if (sprintId && sprintId !== 'ALL') {
       sprintFilterSql = 'AND sprint_id = ?';
       queryParams.push(sprintId);

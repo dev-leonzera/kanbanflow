@@ -109,7 +109,7 @@ export const WorkloadModal: React.FC<WorkloadModalProps> = ({
                 </span>
               </h2>
               <p className="text-xs text-slate-400">
-                Acompanhamento de alocação de horas, prevenção de sobrecarga (CP-02, CP-03) e agenda de conflitos (CP-04).
+                Acompanhamento de alocação de horas, prevenção de sobrecarga e agenda de conflitos.
               </p>
             </div>
           </div>

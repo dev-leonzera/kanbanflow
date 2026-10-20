@@ -1359,7 +1359,7 @@ router.post('/:id/move', (req: Request, res: Response) => {
           );
           if (!hasTimer) {
             run(
-              'INSERT OR REPLACE INTO active_card_timers (id, card_id, user_id, started_at) VALUES (?, ?, ?, datetime("now"))',
+              "INSERT OR REPLACE INTO active_card_timers (id, card_id, user_id, started_at) VALUES (?, ?, ?, datetime('now'))",
               [crypto.randomUUID(), id, userId]
             );
           }

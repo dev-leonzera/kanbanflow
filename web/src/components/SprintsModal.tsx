@@ -370,7 +370,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                 <span className="text-xs font-normal text-slate-400">({boardTitle})</span>
               </h3>
               <p className="text-[11px] text-slate-400">
-                Ciclos ágeis, movimentação de itens, relatórios e retrospectiva (SP-01 a SP-05)
+                Ciclos ágeis, movimentação de itens, relatórios e retrospectiva
               </p>
             </div>
           </div>
@@ -382,7 +382,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                   type="button"
                   onClick={() => handleCreateQuickCycle('WEEKLY')}
                   className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 text-xs font-semibold rounded-lg transition shadow-sm"
-                  title="Criar ciclo rápido de 1 semana (SP-05)"
+                  title="Criar ciclo rápido de 1 semana"
                 >
                   <Clock className="w-3.5 h-3.5 text-indigo-400" />
                   <span>+ Ciclo Semanal</span>
@@ -392,7 +392,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                   type="button"
                   onClick={() => handleCreateQuickCycle('MONTHLY')}
                   className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold rounded-lg transition shadow-sm"
-                  title="Criar ciclo rápido de 1 mês (SP-05)"
+                  title="Criar ciclo rápido de 1 mês"
                 >
                   <Calendar className="w-3.5 h-3.5 text-cyan-400" />
                   <span>+ Ciclo Mensal</span>
@@ -450,7 +450,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
             }`}
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Retrospectiva do Sprint (SP-05)</span>
+            <span>Retrospectiva do Sprint</span>
           </button>
         </div>
 
