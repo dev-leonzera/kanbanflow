@@ -763,8 +763,16 @@ router.post('/quick-cycle', (req: Request, res: Response) => {
   }
   const endStr = endDate.toISOString().split('T')[0];
 
+  const formatDayMonth = (dateStr: string) => {
+    const parts = dateStr.split('-');
+    if (parts.length >= 3) {
+      return `${parts[2]}/${parts[1]}`;
+    }
+    return dateStr;
+  };
+
   const defaultName = type === 'WEEK'
-    ? `Ciclo Semanal (${startStr.substring(5)} a ${endStr.substring(5)})`
+    ? `Ciclo Semanal (${formatDayMonth(startStr)} a ${formatDayMonth(endStr)})`
     : `Ciclo Mensal (${now.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })})`;
 
   const sprintId = crypto.randomUUID();

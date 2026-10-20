@@ -17,6 +17,7 @@ import {
 } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
+import { formatSprintName } from './SprintsModal';
 import {
   X,
   Plus,
@@ -701,7 +702,7 @@ export const CardModal: React.FC<CardModalProps> = ({
                 {cardSprint && (
                   <span className="text-xs text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-md flex items-center gap-1">
                     <Zap className="w-3 h-3 text-amber-400" />
-                    <span>Sprint: <strong className="text-amber-200">{cardSprint.name}</strong></span>
+                    <span>Sprint: <strong className="text-amber-200">{formatSprintName(cardSprint.name)}</strong></span>
                   </span>
                 )}
 
@@ -1654,7 +1655,7 @@ export const CardModal: React.FC<CardModalProps> = ({
                   .map(s => (
                     <option key={s.id} value={s.id}>
                       {s.status === 'ACTIVE' ? '🟢 ' : s.status === 'COMPLETED' ? '⚪ ' : '🟡 '}
-                      {s.name} ({s.status === 'ACTIVE' ? 'Ativo' : s.status === 'COMPLETED' ? 'Concluído' : 'Planejamento'})
+                      {formatSprintName(s.name)} ({s.status === 'ACTIVE' ? 'Ativo' : s.status === 'COMPLETED' ? 'Concluído' : 'Planejamento'})
                     </option>
                   ))}
               </select>

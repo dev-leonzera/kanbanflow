@@ -246,6 +246,27 @@ function migrateSchemaAndExistingData() {
       run('INSERT OR IGNORE INTO board_members (board_id, user_id, role) VALUES (?, ?, ?)', [b.id, ownerId, 'OWNER']);
     }
   }
+
+  // 6. Normaliza nomes de sprints gerados no formato MM-DD para DD/MM
+  try {
+    const sprintCols = queryAll<{ name: string }>('PRAGMA table_info(sprints)');
+    if (sprintCols.length > 0) {
+      const oldSprints = queryAll<{ id: string; name: string }>(
+        "SELECT id, name FROM sprints WHERE name LIKE '%-%'"
+      );
+      for (const sp of oldSprints) {
+        const updated = sp.name.replace(
+          /\((\d{2})-(\d{2})\s+a\s+(\d{2})-(\d{2})\)/g,
+          (_match, m1, d1, m2, d2) => `(${d1}/${m1} a ${d2}/${m2})`
+        );
+        if (updated !== sp.name) {
+          run('UPDATE sprints SET name = ? WHERE id = ?', [updated, sp.id]);
+        }
+      }
+    }
+  } catch (_e) {
+    // Tabela de sprints pode ainda não existir na primeira execução
+  }
 }
 
 // Helpers para consultas simplificadas

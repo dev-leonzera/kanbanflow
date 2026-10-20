@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Priority, Workspace, BoardSummary, BoardVisibility, BoardRole, SavedFilter, Sprint } from '../types';
 import { SettingsScope } from './SettingsModal';
+import { formatSprintName } from './SprintsModal';
 import {
   LogOut,
   Search,
@@ -405,7 +406,7 @@ export const Header: React.FC<HeaderProps> = ({
                       <option value="ALL">Todas as Sprints</option>
                       {sprints.find(s => s.status === 'ACTIVE') && (
                         <option value={sprints.find(s => s.status === 'ACTIVE')!.id}>
-                          🟢 Ativa: {sprints.find(s => s.status === 'ACTIVE')!.name}
+                          🟢 Ativa: {formatSprintName(sprints.find(s => s.status === 'ACTIVE')!.name)}
                         </option>
                       )}
                       <option value="BACKLOG">📦 Apenas Backlog</option>
@@ -413,7 +414,7 @@ export const Header: React.FC<HeaderProps> = ({
                         .filter(s => s.status !== 'ACTIVE')
                         .map(s => (
                           <option key={s.id} value={s.id}>
-                            {s.name} ({s.status === 'PLANNING' ? 'Planejamento' : 'Concluído'})
+                            {formatSprintName(s.name)} ({s.status === 'PLANNING' ? 'Planejamento' : 'Concluído'})
                           </option>
                         ))}
                     </select>

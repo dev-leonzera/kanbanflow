@@ -30,6 +30,23 @@ interface ReportsModalProps {
 
 type ReportTab = 'lead-cycle' | 'burndown' | 'cfd' | 'throughput' | 'timesheet' | 'accuracy';
 
+const formatToDayMonth = (dateStr: string | null | undefined) => {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  if (parts.length >= 3) {
+    return `${parts[2]}/${parts[1]}`;
+  }
+  return dateStr;
+};
+
+const formatSprintName = (name: string | null | undefined) => {
+  if (!name) return '';
+  return name.replace(
+    /\((\d{2})-(\d{2})\s+a\s+(\d{2})-(\d{2})\)/g,
+    (_match, m1, d1, m2, d2) => `(${d1}/${m1} a ${d2}/${m2})`
+  );
+};
+
 export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose, board }) => {
   const [activeTab, setActiveTab] = useState<ReportTab>('lead-cycle');
   const [loading, setLoading] = useState(false);
@@ -313,11 +330,11 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose, boa
                         <div>
                           <h3 className="text-sm font-bold text-white flex items-center gap-2">
                             <TrendingDown className="w-4 h-4 text-indigo-400" />
-                            Burndown do Sprint: {burndownReport.sprint.name}
+                            Burndown do Sprint: {formatSprintName(burndownReport.sprint.name)}
                           </h3>
                           <p className="text-xs text-slate-400 mt-0.5">
-                            {burndownReport.sprint.start_date || 'Início'} até{' '}
-                            {burndownReport.sprint.end_date || 'Término'}
+                            {formatToDayMonth(burndownReport.sprint.start_date) || 'Início'} até{' '}
+                            {formatToDayMonth(burndownReport.sprint.end_date) || 'Término'}
                           </p>
                         </div>
                         <span className="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
@@ -353,7 +370,7 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose, boa
                               return (
                                 <div key={idx} className="flex-1 flex flex-col items-center h-full justify-end group relative">
                                   <div className="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-950 px-2 py-1 rounded text-[10px] text-white border border-slate-700 pointer-events-none z-10 whitespace-nowrap">
-                                    {point.date}: Real {point.remainingPoints} pts / Ideal {point.idealPoints} pts
+                                    {formatToDayMonth(point.date)}: Real {point.remainingPoints} pts / Ideal {point.idealPoints} pts
                                   </div>
                                   <div className="w-full flex items-end justify-center gap-1 h-full">
                                     <div
@@ -366,7 +383,7 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose, boa
                                     />
                                   </div>
                                   <span className="text-[9px] text-slate-500 mt-2 truncate w-full text-center">
-                                    {point.date.slice(5)}
+                                    {formatToDayMonth(point.date)}
                                   </span>
                                 </div>
                               );
@@ -453,7 +470,7 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose, boa
                             <th className="pb-2 font-semibold">Coluna / Etapa</th>
                             {cfdReport.dates.map(d => (
                               <th key={d} className="pb-2 text-center text-[10px] font-mono">
-                                {d.slice(5)}
+                                {formatToDayMonth(d)}
                               </th>
                             ))}
                           </tr>
