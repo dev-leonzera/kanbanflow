@@ -289,14 +289,17 @@ export const CardModal: React.FC<CardModalProps> = ({
     }
   };
 
-  const getPriorityBadge = (p: Priority) => {
-    switch (p) {
+  const getPriorityBadge = (p?: Priority | string | null) => {
+    const normalized = (p || 'MEDIUM').toString().toUpperCase();
+    switch (normalized) {
       case 'HIGH':
+      case 'URGENT':
         return { label: 'Alta', color: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
-      case 'MEDIUM':
-        return { label: 'Média', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
       case 'LOW':
         return { label: 'Baixa', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' };
+      case 'MEDIUM':
+      default:
+        return { label: 'Média', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
     }
   };
 

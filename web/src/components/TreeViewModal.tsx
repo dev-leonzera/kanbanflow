@@ -64,7 +64,8 @@ interface TreeNodeItemProps {
 
 const TreeNodeItem: React.FC<TreeNodeItemProps> = ({ node, level, onSelectCard }) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const typeCfg = typeConfig[node.type as CardType] || typeConfig.TASK;
+  const normalizedType = (node.type ? String(node.type).toUpperCase() : 'TASK') as CardType;
+  const typeCfg = typeConfig[normalizedType] || typeConfig.TASK;
   const hasChildren = node.children && node.children.length > 0;
 
   return (

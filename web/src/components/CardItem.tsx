@@ -120,14 +120,17 @@ export const CardItem: React.FC<CardItemProps> = ({
   const typeBadge = getTypeBadge(card.type || 'TASK');
 
   // Priority Badge
-  const getPriorityBadge = (priority: Priority) => {
-    switch (priority) {
+  const getPriorityBadge = (priority?: Priority | string | null) => {
+    const normalized = (priority || 'MEDIUM').toString().toUpperCase();
+    switch (normalized) {
       case 'HIGH':
+      case 'URGENT':
         return { label: 'Alta', color: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
-      case 'MEDIUM':
-        return { label: 'Média', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
       case 'LOW':
         return { label: 'Baixa', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' };
+      case 'MEDIUM':
+      default:
+        return { label: 'Média', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
     }
   };
 

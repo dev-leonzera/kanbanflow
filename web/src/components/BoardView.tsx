@@ -52,6 +52,29 @@ import {
   Clock,
 } from 'lucide-react';
 
+const getPriorityBadge = (priority?: Priority | string | null) => {
+  const normalized = (priority || 'MEDIUM').toString().toUpperCase();
+  switch (normalized) {
+    case 'HIGH':
+    case 'URGENT':
+      return { label: 'Alta', color: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
+    case 'LOW':
+      return { label: 'Baixa', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' };
+    case 'MEDIUM':
+    default:
+      return { label: 'Média', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
+  }
+};
+
+const CARD_TYPE_LABELS: Record<string, string> = {
+  BUG: 'Bug',
+  FEATURE: 'Melhoria',
+  EPIC: 'Épico',
+  SUBTASK: 'Subtarefa',
+  TASK: 'Tarefa',
+  STORY: 'História',
+};
+
 export const BoardView: React.FC = () => {
   const [board, setBoard] = useState<Board | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1240,6 +1263,7 @@ export const BoardView: React.FC = () => {
             <div className="space-y-2">
               {allFilteredCards.map(card => {
                 const col = board.columns.find(c => c.id === card.column_id);
+                const priorityBadge = getPriorityBadge(card.priority);
                 return (
                   <div
                     key={card.id}
@@ -1289,12 +1313,8 @@ export const BoardView: React.FC = () => {
                           {new Date(card.due_date + 'T00:00:00').toLocaleDateString('pt-BR')}
                         </span>
                       )}
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
-                        card.priority === 'HIGH' ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' :
-                        card.priority === 'MEDIUM' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' :
-                        'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                      }`}>
-                        {card.priority}
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${priorityBadge.color}`}>
+                        {priorityBadge.label}
                       </span>
                       <span className="text-xs text-slate-300 font-medium">
                         {card.assignee || 'Sem resp.'}
@@ -1330,6 +1350,7 @@ export const BoardView: React.FC = () => {
                 <tbody className="divide-y divide-slate-800/60">
                   {allFilteredCards.map(card => {
                     const col = board.columns.find(c => c.id === card.column_id);
+                    const priorityBadge = getPriorityBadge(card.priority);
                     return (
                       <tr
                         key={card.id}
@@ -1344,14 +1365,10 @@ export const BoardView: React.FC = () => {
                             {col?.title || 'Coluna'}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-slate-300">{card.type || 'TASK'}</td>
+                        <td className="py-3 px-4 text-slate-300">{CARD_TYPE_LABELS[card.type || 'TASK'] || card.type || 'Tarefa'}</td>
                         <td className="py-3 px-4">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
-                            card.priority === 'HIGH' ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' :
-                            card.priority === 'MEDIUM' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' :
-                            'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                          }`}>
-                            {card.priority}
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${priorityBadge.color}`}>
+                            {priorityBadge.label}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-slate-300">{card.assignee || '-'}</td>
