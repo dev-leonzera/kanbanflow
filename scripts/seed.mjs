@@ -12,6 +12,8 @@ db.exec('PRAGMA foreign_keys = ON;');
 
 const PASSWORD = 'senha123';
 const hash = bcrypt.hashSync(PASSWORD, 10);
+const ADMIN_PASSWORD = 'admin123';
+const adminHash = bcrypt.hashSync(ADMIN_PASSWORD, 10);
 
 const day = (offset) => {
   const d = new Date();
@@ -27,17 +29,19 @@ try {
 
   // ---------- Usuários ----------
   const users = [
-    { id: 'seed-user-ana', name: 'Ana Souza', email: 'ana@kanbanflow.dev', role: 'OWNER', team: 'produto' },
-    { id: 'seed-user-bruno', name: 'Bruno Lima', email: 'bruno@kanbanflow.dev', role: 'ADMIN', team: 'backend' },
-    { id: 'seed-user-carla', name: 'Carla Mendes', email: 'carla@kanbanflow.dev', role: 'MEMBER', team: 'frontend' },
-    { id: 'seed-user-diego', name: 'Diego Rocha', email: 'diego@kanbanflow.dev', role: 'MEMBER', team: 'backend' },
-    { id: 'seed-user-elisa', name: 'Elisa Prado', email: 'elisa@kanbanflow.dev', role: 'MEMBER', team: 'qa' },
-    { id: 'seed-user-fabio', name: 'Fábio Nunes', email: 'fabio@kanbanflow.dev', role: 'GUEST', team: null },
+    { id: 'seed-user-admin', name: 'Admin Master', email: 'admin@admin.com', passwordHash: adminHash, role: 'OWNER', team: 'produto' },
+    { id: 'seed-user-admin-alt', name: 'Admin Master', email: 'admin@kanbanflow.dev', passwordHash: adminHash, role: 'OWNER', team: 'produto' },
+    { id: 'seed-user-ana', name: 'Ana Souza', email: 'ana@kanbanflow.dev', passwordHash: hash, role: 'ADMIN', team: 'produto' },
+    { id: 'seed-user-bruno', name: 'Bruno Lima', email: 'bruno@kanbanflow.dev', passwordHash: hash, role: 'ADMIN', team: 'backend' },
+    { id: 'seed-user-carla', name: 'Carla Mendes', email: 'carla@kanbanflow.dev', passwordHash: hash, role: 'MEMBER', team: 'frontend' },
+    { id: 'seed-user-diego', name: 'Diego Rocha', email: 'diego@kanbanflow.dev', passwordHash: hash, role: 'MEMBER', team: 'backend' },
+    { id: 'seed-user-elisa', name: 'Elisa Prado', email: 'elisa@kanbanflow.dev', passwordHash: hash, role: 'MEMBER', team: 'qa' },
+    { id: 'seed-user-fabio', name: 'Fábio Nunes', email: 'fabio@kanbanflow.dev', passwordHash: hash, role: 'GUEST', team: null },
   ];
   const insUser = db.prepare('INSERT INTO users (id, email, password_hash, name) VALUES (?, ?, ?, ?)');
   for (const u of users) {
     db.prepare('DELETE FROM users WHERE email = ?').run(u.email);
-    insUser.run(u.id, u.email, hash, u.name);
+    insUser.run(u.id, u.email, u.passwordHash, u.name);
   }
 
   // ---------- Workspace ----------
@@ -53,7 +57,7 @@ try {
   const insCap = db.prepare(
     'INSERT INTO workspace_member_capacities (id, workspace_id, user_id, weekly_capacity_hours, sprint_capacity_points) VALUES (?, ?, ?, ?, ?)'
   );
-  users.filter((u) => u.role !== 'GUEST').forEach((u, i) => insCap.run(`seed-cap-${i}`, ws, u.id, i === 0 ? 20 : 40, i === 0 ? 8 : 20));
+  users.filter((u) => u.role !== 'GUEST').forEach((u, i) => insCap.run(`seed-cap-${i}`, ws, u.id, u.role === 'OWNER' ? 40 : 35, 20));
 
   // ---------- Equipes ----------
   const teams = { produto: 'Produto', backend: 'Backend', frontend: 'Frontend', qa: 'Qualidade' };
@@ -67,8 +71,10 @@ try {
   // ---------- Quadro e colunas ----------
   const board = 'seed-board-ecommerce';
   db.prepare("INSERT INTO boards (id, workspace_id, user_id, title, visibility, estimate_type) VALUES (?, ?, ?, ?, 'WORKSPACE', 'POINTS')")
-    .run(board, ws, 'seed-user-ana', 'Plataforma E-commerce');
-  db.prepare('INSERT INTO board_members (board_id, user_id, role) VALUES (?, ?, ?)').run(board, 'seed-user-ana', 'OWNER');
+    .run(board, ws, 'seed-user-admin', 'Plataforma E-commerce');
+  db.prepare('INSERT INTO board_members (board_id, user_id, role) VALUES (?, ?, ?)').run(board, 'seed-user-admin', 'OWNER');
+  db.prepare('INSERT INTO board_members (board_id, user_id, role) VALUES (?, ?, ?)').run(board, 'seed-user-admin-alt', 'OWNER');
+  db.prepare('INSERT INTO board_members (board_id, user_id, role) VALUES (?, ?, ?)').run(board, 'seed-user-ana', 'ADMIN');
   db.prepare('INSERT INTO board_members (board_id, user_id, role) VALUES (?, ?, ?)').run(board, 'seed-user-fabio', 'VIEWER');
 
   const cols = {
@@ -112,8 +118,8 @@ try {
     ['task-webhook', 'todo', 'story-pix', 'TASK', 'Webhook de confirmação de pagamento', 'HIGH', 'Backend', 'Diego Rocha', '3', day(4), 'seed-sprint-2', 'Validar assinatura HMAC e idempotência.'],
     ['task-token', 'todo', 'story-cartao', 'TASK', 'Tokenização de cartão no front', 'MEDIUM', 'Frontend', 'Carla Mendes', '3', day(6), 'seed-sprint-2', ''],
     ['task-indice', 'done', 'story-busca', 'TASK', 'Criar índice full-text de produtos', 'MEDIUM', 'Backend', 'Diego Rocha', '3', day(-20), 'seed-sprint-1', ''],
-    ['task-docs', 'backlog', null, 'TASK', 'Documentar variáveis de ambiente', 'LOW', 'DevOps', null, '1', null, null, 'Tarefa avulsa, sem épico.'],
-    ['task-ci', 'done', null, 'TASK', 'Configurar pipeline de CI', 'MEDIUM', 'DevOps', 'Bruno Lima', '2', day(-25), 'seed-sprint-1', ''],
+    ['task-docs', 'backlog', null, 'TASK', 'Documentar variáveis de ambiente', 'LOW', 'DevOps', 'Admin Master', '1', null, null, 'Tarefa avulsa documentada pelo time.'],
+    ['task-ci', 'done', null, 'TASK', 'Configurar pipeline de CI/CD', 'HIGH', 'DevOps', 'Admin Master', '2', day(-25), 'seed-sprint-1', 'Integração contínua e automações.'],
 
     // Bugs
     ['bug-qr', 'doing', 'story-pix', 'BUG', 'QR Code não renderiza no Safari iOS', 'HIGH', 'Frontend', 'Carla Mendes', '2', day(1), 'seed-sprint-2', 'Canvas retorna em branco no iOS 17.'],
@@ -161,6 +167,7 @@ try {
   // ---------- Comentários ----------
   const insComment = db.prepare('INSERT INTO card_comments (id, card_id, user_id, content) VALUES (?, ?, ?, ?)');
   [
+    ['task-pix-api', 'seed-user-admin', 'Ambiente de homologação validado e liberado para os testes do time.'],
     ['bug-qr', 'seed-user-elisa', 'Reproduzido no iPhone 13 com iOS 17.2. Anexei o vídeo.'],
     ['bug-qr', 'seed-user-carla', 'Vou trocar o canvas por SVG, deve resolver.'],
     ['task-pix-api', 'seed-user-ana', 'Prioridade máxima da sprint, qualquer bloqueio me avisem.'],
@@ -170,6 +177,7 @@ try {
   // ---------- Horas lançadas ----------
   const insLog = db.prepare('INSERT INTO card_time_logs (id, card_id, user_id, duration_seconds, notes, log_date) VALUES (?, ?, ?, ?, ?, ?)');
   [
+    ['task-ci', 'seed-user-admin', 3 * 3600, 'Pipeline de CI/CD e automações', day(-25)],
     ['task-pix-api', 'seed-user-bruno', 4 * 3600, 'Setup do gateway', day(-3)],
     ['sub-mtls', 'seed-user-bruno', 2 * 3600, 'Certificados', day(-4)],
     ['task-pix-ui', 'seed-user-carla', 5 * 3600, 'Layout e testes', day(-2)],
@@ -191,6 +199,20 @@ try {
   throw e;
 }
 
-console.log('✔ Seed concluído.');
-console.log(`  Usuários (senha "${PASSWORD}"): ana, bruno, carla, diego, elisa, fabio @kanbanflow.dev`);
-console.log('  Workspace "Acme Commerce" › quadro "Plataforma E-commerce"');
+console.log('\n✔ Seed concluído com sucesso!');
+console.log('='.repeat(65));
+console.log('👑 USUÁRIO ADMIN PADRÃO (Acesso Total):');
+console.log('   E-mail:    admin@admin.com  (ou admin@kanbanflow.dev)');
+console.log(`   Senha:     ${ADMIN_PASSWORD}`);
+console.log('   Papel:     OWNER (Dono do Workspace e do Quadro)');
+console.log('-'.repeat(65));
+console.log(`👥 Usuários da Equipe (senha "${PASSWORD}"):`);
+console.log('   ana@kanbanflow.dev    (ADMIN - Produto)');
+console.log('   bruno@kanbanflow.dev  (ADMIN - Backend)');
+console.log('   carla@kanbanflow.dev  (MEMBER - Frontend)');
+console.log('   diego@kanbanflow.dev  (MEMBER - Backend)');
+console.log('   elisa@kanbanflow.dev  (MEMBER - QA)');
+console.log('   fabio@kanbanflow.dev  (GUEST - Convidado/Viewer)');
+console.log('-'.repeat(65));
+console.log('🏢 Workspace: "Acme Commerce" › Quadro: "Plataforma E-commerce"');
+console.log('='.repeat(65) + '\n');
