@@ -165,14 +165,26 @@ router.get('/:workspaceId/workload', (req: Request, res: Response) => {
     return;
   }
 
-  // Membros do workspace
-  const members = queryAll<{ user_id: string; user_name: string; user_email: string }>(`
-    SELECT wm.user_id, u.name as user_name, u.email as user_email
-    FROM workspace_members wm
-    JOIN users u ON u.id = wm.user_id
-    WHERE wm.workspace_id = ?
+  // Membros do time: workspace + convidados em quadros + equipes com acesso a quadros
+  const boardScope = boardId ? 'b.workspace_id = ? AND b.id = ?' : 'b.workspace_id = ?';
+  const boardScopeParams = boardId ? [workspaceId, boardId] : [workspaceId];
+  const registeredMembers = queryAll<{ user_id: string; user_name: string; user_email: string }>(`
+    SELECT u.id as user_id, u.name as user_name, u.email as user_email
+    FROM users u
+    WHERE u.id IN (
+      SELECT wm.user_id FROM workspace_members wm WHERE wm.workspace_id = ?
+      UNION
+      SELECT bm.user_id FROM board_members bm
+        JOIN boards b ON b.id = bm.board_id
+        WHERE ${boardScope}
+      UNION
+      SELECT wtm.user_id FROM board_team_permissions btp
+        JOIN boards b ON b.id = btp.board_id
+        JOIN workspace_team_members wtm ON wtm.team_id = btp.team_id
+        WHERE ${boardScope}
+    )
     ORDER BY u.name ASC
-  `, [workspaceId]);
+  `, [workspaceId, ...boardScopeParams, ...boardScopeParams]);
 
   // Capacidades configuradas
   const capacities = queryAll<{ user_id: string; weekly_capacity_hours: number; sprint_capacity_points: number }>(`
@@ -213,16 +225,38 @@ router.get('/:workspaceId/workload', (req: Request, res: Response) => {
       AND c.assignee IS NOT NULL
   `, params);
 
+  // Responsáveis em texto livre sem conta cadastrada viram entradas virtuais
+  const norm = (s: string | null | undefined) => (s || '').trim().toLowerCase();
+  const knownKeys = new Set<string>();
+  registeredMembers.forEach(m => {
+    knownKeys.add(norm(m.user_name));
+    knownKeys.add(norm(m.user_email));
+  });
+  const virtualMap = new Map<string, string>();
+  activeCards.forEach(c => {
+    const key = norm(c.assignee);
+    if (key && !knownKeys.has(key) && !virtualMap.has(key)) {
+      virtualMap.set(key, c.assignee!.trim());
+    }
+  });
+
+  const members: { user_id: string; user_name: string; user_email: string; is_registered: boolean }[] = [
+    ...registeredMembers.map(m => ({ ...m, is_registered: true })),
+    ...Array.from(virtualMap.entries())
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .map(([key, name]) => ({ user_id: `assignee:${key}`, user_name: name, user_email: '', is_registered: false })),
+  ];
+
   const workloadSummaries: MemberWorkloadSummary[] = members.map(m => {
-    const userCap = capMap.get(m.user_id);
+    const userCap = m.is_registered ? capMap.get(m.user_id) : undefined;
     const weeklyHours = userCap ? userCap.weekly_capacity_hours : 40.0;
     const sprintPoints = userCap ? userCap.sprint_capacity_points : 20.0;
 
     // Cartões do membro (comparando por nome do assignee ou email)
     const userCards = activeCards.filter(c => {
-      if (!c.assignee) return false;
-      const target = c.assignee.trim().toLowerCase();
-      return target === m.user_name.trim().toLowerCase() || target === m.user_email.trim().toLowerCase();
+      const target = norm(c.assignee);
+      if (!target) return false;
+      return target === norm(m.user_name) || (!!m.user_email && target === norm(m.user_email));
     });
 
     let totalAllocatedHours = 0;
@@ -278,6 +312,7 @@ router.get('/:workspaceId/workload', (req: Request, res: Response) => {
       user_id: m.user_id,
       user_name: m.user_name,
       user_email: m.user_email,
+      is_registered: m.is_registered,
       weekly_capacity_hours: weeklyHours,
       sprint_capacity_points: sprintPoints,
       allocated_hours: Math.round(totalAllocatedHours * 10) / 10,
