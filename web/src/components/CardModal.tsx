@@ -17,6 +17,7 @@ import {
 } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
+import { formatSprintName } from './SprintsModal';
 import {
   X,
   Plus,
@@ -701,7 +702,7 @@ export const CardModal: React.FC<CardModalProps> = ({
                 {cardSprint && (
                   <span className="text-xs text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-md flex items-center gap-1">
                     <Zap className="w-3 h-3 text-amber-400" />
-                    <span>Sprint: <strong className="text-amber-200">{cardSprint.name}</strong></span>
+                    <span>Sprint: <strong className="text-amber-200">{formatSprintName(cardSprint.name)}</strong></span>
                   </span>
                 )}
 
@@ -1549,7 +1550,7 @@ export const CardModal: React.FC<CardModalProps> = ({
           {/* Footer Visualização */}
           <div className="px-6 py-4 border-t border-slate-700 flex items-center justify-between gap-3 bg-slate-800/80">
             <span className="text-xs text-slate-400">
-              Para fazer alterações nos campos principais desta tarefa, clique em Editar.
+              Para fazer alterações nos campos principais desta tarefa, clique em Editar no topo.
             </span>
             <div className="flex items-center gap-2.5">
               <button
@@ -1558,14 +1559,6 @@ export const CardModal: React.FC<CardModalProps> = ({
                 className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white bg-slate-700/60 hover:bg-slate-700 rounded-xl transition"
               >
                 Fechar
-              </button>
-              <button
-                type="button"
-                onClick={onSwitchToEdit}
-                className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl shadow flex items-center gap-1.5 transition"
-              >
-                <Pencil className="w-3.5 h-3.5" />
-                <span>Editar Tarefa</span>
               </button>
             </div>
           </div>
@@ -1654,7 +1647,7 @@ export const CardModal: React.FC<CardModalProps> = ({
                   .map(s => (
                     <option key={s.id} value={s.id}>
                       {s.status === 'ACTIVE' ? '🟢 ' : s.status === 'COMPLETED' ? '⚪ ' : '🟡 '}
-                      {s.name} ({s.status === 'ACTIVE' ? 'Ativo' : s.status === 'COMPLETED' ? 'Concluído' : 'Planejamento'})
+                      {formatSprintName(s.name)} ({s.status === 'ACTIVE' ? 'Ativo' : s.status === 'COMPLETED' ? 'Concluído' : 'Planejamento'})
                     </option>
                   ))}
               </select>

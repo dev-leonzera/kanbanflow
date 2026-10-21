@@ -233,11 +233,18 @@ export const WorkloadModal: React.FC<WorkloadModalProps> = ({
                                 </span>
                               )}
                             </div>
-                            <div className="text-xs text-slate-400">{member.user_email}</div>
+                            <div className="text-xs text-slate-400">
+                              {member.is_registered === false ? 'Responsável sem conta no sistema' : member.user_email}
+                            </div>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2">
+                          {member.is_registered === false ? (
+                            <span className="px-2 py-1 text-[11px] font-medium text-slate-400 border border-slate-700 rounded-md">
+                              Sem conta
+                            </span>
+                          ) : (
                           <button
                             type="button"
                             onClick={() => handleOpenEditCapacity(member)}
@@ -247,6 +254,7 @@ export const WorkloadModal: React.FC<WorkloadModalProps> = ({
                             <Sliders className="w-3.5 h-3.5 text-indigo-400" />
                             <span>Ajustar Capacidade</span>
                           </button>
+                          )}
                         </div>
                       </div>
 

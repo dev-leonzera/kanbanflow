@@ -208,6 +208,7 @@ export interface MemberWorkloadSummary {
   user_id: string;
   user_name: string;
   user_email?: string;
+  is_registered?: boolean;
   weekly_capacity_hours: number;
   sprint_capacity_points: number;
   allocated_hours: number;

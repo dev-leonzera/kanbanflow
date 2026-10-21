@@ -22,6 +22,23 @@ import {
 import { Card, Sprint, SprintReport, EstimateType, BoardRole, RetroCategory, SprintRetroItem } from '../types';
 import { api } from '../api/client';
 
+export const formatToDayMonth = (dateStr: string | null | undefined) => {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  if (parts.length >= 3) {
+    return `${parts[2]}/${parts[1]}`;
+  }
+  return dateStr;
+};
+
+export const formatSprintName = (name: string | null | undefined) => {
+  if (!name) return '';
+  return name.replace(
+    /\((\d{2})-(\d{2})\s+a\s+(\d{2})-(\d{2})\)/g,
+    (_match, m1, d1, m2, d2) => `(${d1}/${m1} a ${d2}/${m2})`
+  );
+};
+
 interface SprintsModalProps {
   isOpen: boolean;
   boardId: string;
@@ -227,7 +244,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
         moveToNextSprintId: moveToNextSprintId || null,
         moveToBacklog: !moveToNextSprintId,
       });
-      setSuccessMsg(`Sprint "${closingSprint.name}" encerrado! ${res.completedCount} entregues, ${res.incompleteCount} movidos para ${res.destination === 'NEXT_SPRINT' ? 'o próximo sprint' : 'o backlog'}.`);
+      setSuccessMsg(`Sprint "${formatSprintName(closingSprint.name)}" encerrado! ${res.completedCount} entregues, ${res.incompleteCount} movidos para ${res.destination === 'NEXT_SPRINT' ? 'o próximo sprint' : 'o backlog'}.`);
       setClosingSprint(null);
       await loadSprints();
       await onRefreshBoard();
@@ -512,7 +529,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-bold text-white">{activeSprint.name}</span>
+                          <span className="text-sm font-bold text-white">{formatSprintName(activeSprint.name)}</span>
                           <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase">
                             Ativo
                           </span>
@@ -527,7 +544,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                           <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
                             <Calendar className="w-3 h-3 text-slate-500" />
                             <span>
-                              {activeSprint.start_date || 'Início'} até {activeSprint.end_date || 'Término'}
+                              {formatToDayMonth(activeSprint.start_date) || 'Início'} até {formatToDayMonth(activeSprint.end_date) || 'Término'}
                             </span>
                           </div>
                         )}
@@ -637,7 +654,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-white">{sprint.name}</span>
+                                <span className="text-sm font-bold text-white">{formatSprintName(sprint.name)}</span>
                                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase">
                                   Planejamento
                                 </span>
@@ -652,7 +669,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                                 <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
                                   <Calendar className="w-3 h-3 text-slate-500" />
                                   <span>
-                                    {sprint.start_date || 'Início'} até {sprint.end_date || 'Término'}
+                                    {formatToDayMonth(sprint.start_date) || 'Início'} até {formatToDayMonth(sprint.end_date) || 'Término'}
                                   </span>
                                 </div>
                               )}
@@ -804,7 +821,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                                   onClick={() => handleMoveCardToSprint(card.id, ps.id)}
                                   className="px-2 py-1 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 rounded text-[11px] font-semibold transition"
                                 >
-                                  {ps.name}
+                                  {formatSprintName(ps.name)}
                                 </button>
                               ))}
                             </div>
@@ -829,7 +846,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                       <div key={cs.id} className="p-3.5 flex items-center justify-between gap-3 text-xs">
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-200">{cs.name}</span>
+                            <span className="font-bold text-slate-200">{formatSprintName(cs.name)}</span>
                             <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700">
                               Concluído
                             </span>
@@ -865,7 +882,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                   >
                     {sprints.map(s => (
                       <option key={s.id} value={s.id}>
-                        {s.name} ({s.status === 'ACTIVE' ? '🟢 Ativo' : s.status === 'COMPLETED' ? '⚪ Concluído' : '🟡 Planejamento'})
+                        {formatSprintName(s.name)} ({s.status === 'ACTIVE' ? '🟢 Ativo' : s.status === 'COMPLETED' ? '⚪ Concluído' : '🟡 Planejamento'})
                       </option>
                     ))}
                   </select>
@@ -1199,7 +1216,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-amber-400" />
                 <h4 className="font-bold text-white text-sm">
-                  Encerramento Guiado: {closingSprint.name}
+                  Encerramento Guiado: {formatSprintName(closingSprint.name)}
                 </h4>
               </div>
               <button
@@ -1231,7 +1248,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                     .filter(p => p.id !== closingSprint.id)
                     .map(p => (
                       <option key={p.id} value={p.id}>
-                        Mover para o próximo sprint: {p.name}
+                        Mover para o próximo sprint: {formatSprintName(p.name)}
                       </option>
                     ))}
                 </select>
@@ -1284,7 +1301,7 @@ export const SprintsModal: React.FC<SprintsModalProps> = ({
                     Relatório de Sprint: Planejado vs. Entregue
                   </h4>
                   <span className="text-[11px] text-slate-400">
-                    {sprintReport?.sprint.name}
+                    {formatSprintName(sprintReport?.sprint.name)}
                   </span>
                 </div>
               </div>
